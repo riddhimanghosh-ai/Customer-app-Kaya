@@ -211,26 +211,28 @@ const MobileShell = ({ children, active = '' }: { children: React.ReactNode; act
       padding: '8px 0',
     }}>
       {[
-        { k: 'home', icon: IconHome, label: 'Home' },
-        { k: 'appointments', icon: IconAppt, label: 'Sessions' },
-        { k: 'rewards', icon: IconRewards, label: 'Loyalty' },
-        { k: 'more', icon: IconChat, label: 'More' },
+        { k: 'home', icon: IconHome, label: 'Home', href: '/' },
+        { k: 'appointments', icon: IconAppt, label: 'Sessions', href: '/sessions' },
+        { k: 'rewards', icon: IconRewards, label: 'Loyalty', href: '/loyalty' },
+        { k: 'chat', icon: IconChat, label: 'Chat', href: '/chat' },
       ].map((item) => (
-        <button key={item.k} style={{
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
-          padding: '8px',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: 4,
-          fontSize: 10,
-          color: active === item.k ? 'var(--gold)' : 'var(--mute-2)',
-        }}>
-          <item.icon size={18} />
-          {item.label}
-        </button>
+        <Link key={item.k} href={item.href}>
+          <div style={{
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            padding: '8px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 4,
+            fontSize: 10,
+            color: active === item.k ? 'var(--gold)' : 'var(--mute-2)',
+          }}>
+            <item.icon size={18} />
+            {item.label}
+          </div>
+        </Link>
       ))}
     </div>
   </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 /* Icons */
 const Icon = ({ size = 18, children, stroke = 1.4, style }: any) => (
@@ -150,12 +151,14 @@ const Brand = ({ tag = "Skin · Hair · Body" }: any) => (
   </div>
 );
 
-const NavItem = ({ icon: I, label, active, badge }: any) => (
-  <div className={`nav-item${active ? ' active' : ''}`}>
-    <span className="nav-icon"><I size={15} stroke={1.6} /></span>
-    <span>{label}</span>
-    {badge && <span className={`badge${active ? '' : ' mute'}`}>{badge}</span>}
-  </div>
+const NavItem = ({ icon: I, label, active, badge, href }: any) => (
+  <Link href={href}>
+    <div className={`nav-item${active ? ' active' : ''}`}>
+      <span className="nav-icon"><I size={15} stroke={1.6} /></span>
+      <span>{label}</span>
+      {badge && <span className={`badge${active ? '' : ' mute'}`}>{badge}</span>}
+    </div>
+  </Link>
 );
 
 const NavRail = ({ active = 'appointments' }: any) => (
@@ -166,23 +169,23 @@ const NavRail = ({ active = 'appointments' }: any) => (
 
     <div style={{ marginTop: 22 }}>
       <div className="group-label">Care</div>
-      <NavItem icon={IconHome} label="Overview" active={active === 'dashboard'} />
-      <NavItem icon={IconAppt} label="Appointments" badge="2" active={active === 'appointments'} />
-      <NavItem icon={IconMed} label="Medications" badge="4" active={active === 'prescriptions'} />
-      <NavItem icon={IconProgress} label="Progress" active={active === 'before-after'} />
-      <NavItem icon={IconChat} label="Dr. AI" active={active === 'chatbot'} />
+      <NavItem icon={IconHome} label="Overview" href="/" active={active === 'dashboard'} />
+      <NavItem icon={IconAppt} label="Appointments" href="/sessions" badge="2" active={active === 'appointments'} />
+      <NavItem icon={IconMed} label="Medications" href="/prescriptions" badge="4" active={active === 'prescriptions'} />
+      <NavItem icon={IconProgress} label="Progress" href="/before-after" active={active === 'before-after'} />
+      <NavItem icon={IconChat} label="Dr. AI" href="/chat" active={active === 'chatbot'} />
     </div>
 
     <div style={{ marginTop: 8 }}>
       <div className="group-label">Membership</div>
-      <NavItem icon={IconRewards} label="Loyalty" active={active === 'loyalty'} />
-      <NavItem icon={IconRefer} label="Referrals" active={active === 'referral'} />
+      <NavItem icon={IconRewards} label="Loyalty" href="/loyalty" active={active === 'loyalty'} />
+      <NavItem icon={IconRefer} label="Referrals" href="/referral" active={active === 'referral'} />
     </div>
 
     <div style={{ marginTop: 8 }}>
       <div className="group-label">Learn</div>
-      <NavItem icon={IconBlog} label="Articles" active={active === 'blogs'} />
-      <NavItem icon={IconVideo} label="Videos" active={active === 'videos'} />
+      <NavItem icon={IconBlog} label="Articles" href="/blog" active={active === 'blog'} />
+      <NavItem icon={IconVideo} label="Videos" href="/videos" active={active === 'videos'} />
     </div>
 
     <div style={{ marginTop: 'auto', borderTop: '1px solid var(--hair)', paddingTop: 14 }}>
@@ -273,31 +276,41 @@ const MobileShell = ({ active = 'appt', children }: any) => (
       {children}
     </div>
     <div className="tabbar">
-      <div className={`tab${active === 'home' ? ' active' : ''}`}>
-        <IconHome size={20} stroke={1.4} />
-        <span>Home</span>
-        <span className="dot" />
-      </div>
-      <div className={`tab${active === 'appt' ? ' active' : ''}`}>
-        <IconAppt size={20} stroke={1.4} />
-        <span>Visits</span>
-        <span className="dot" />
-      </div>
-      <div className={`tab${active === 'progress' ? ' active' : ''}`}>
-        <IconProgress size={20} stroke={1.4} />
-        <span>Progress</span>
-        <span className="dot" />
-      </div>
-      <div className={`tab${active === 'rewards' ? ' active' : ''}`}>
-        <IconRewards size={20} stroke={1.4} />
-        <span>Rewards</span>
-        <span className="dot" />
-      </div>
-      <div className={`tab${active === 'ai' ? ' active' : ''}`}>
-        <IconChat size={20} stroke={1.4} />
-        <span>Dr. AI</span>
-        <span className="dot" />
-      </div>
+      <Link href="/">
+        <div className={`tab${active === 'home' ? ' active' : ''}`}>
+          <IconHome size={20} stroke={1.4} />
+          <span>Home</span>
+          <span className="dot" />
+        </div>
+      </Link>
+      <Link href="/sessions">
+        <div className={`tab${active === 'appt' ? ' active' : ''}`}>
+          <IconAppt size={20} stroke={1.4} />
+          <span>Visits</span>
+          <span className="dot" />
+        </div>
+      </Link>
+      <Link href="/before-after">
+        <div className={`tab${active === 'progress' ? ' active' : ''}`}>
+          <IconProgress size={20} stroke={1.4} />
+          <span>Progress</span>
+          <span className="dot" />
+        </div>
+      </Link>
+      <Link href="/loyalty">
+        <div className={`tab${active === 'rewards' ? ' active' : ''}`}>
+          <IconRewards size={20} stroke={1.4} />
+          <span>Rewards</span>
+          <span className="dot" />
+        </div>
+      </Link>
+      <Link href="/chat">
+        <div className={`tab${active === 'ai' ? ' active' : ''}`}>
+          <IconChat size={20} stroke={1.4} />
+          <span>Dr. AI</span>
+          <span className="dot" />
+        </div>
+      </Link>
     </div>
   </div>
 );

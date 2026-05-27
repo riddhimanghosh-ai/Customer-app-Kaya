@@ -182,17 +182,17 @@ const MobileShell = ({ active, children }) => {
       </div>
       <div className="tabbar" style={{ display: 'grid', gridTemplateColumns: 'repeat(9, 1fr)', gap: 0, borderTop: '1px solid var(--hair)' }}>
         {[
-          { icon: IconHome, label: 'Home', key: 'home' },
-          { icon: IconAppt, label: 'Sessions', key: 'sessions' },
-          { icon: IconMed, label: 'Rx', key: 'prescriptions' },
-          { icon: IconProgress, label: 'Progress', key: 'progress' },
-          { icon: IconChat, label: 'Chat', key: 'chat' },
-          { icon: IconRewards, label: 'Loyalty', key: 'loyalty' },
-          { icon: IconRefer, label: 'Refer', key: 'refer' },
-          { icon: IconBlog, label: 'Blog', key: 'blog' },
-          { icon: IconVideo, label: 'Videos', key: 'videos' },
-        ].map(({ icon: Icon, label, key }) => (
-          <NavItem key={key} icon={Icon} label={label} active={active === key} />
+          { icon: IconHome, label: 'Home', key: 'home', href: '/' },
+          { icon: IconAppt, label: 'Sessions', key: 'sessions', href: '/sessions' },
+          { icon: IconMed, label: 'Rx', key: 'prescriptions', href: '/prescriptions' },
+          { icon: IconProgress, label: 'Progress', key: 'progress', href: '/before-after' },
+          { icon: IconChat, label: 'Chat', key: 'chat', href: '/chat' },
+          { icon: IconRewards, label: 'Loyalty', key: 'loyalty', href: '/loyalty' },
+          { icon: IconRefer, label: 'Refer', key: 'refer', href: '/referral' },
+          { icon: IconBlog, label: 'Blog', key: 'blog', href: '/blog' },
+          { icon: IconVideo, label: 'Videos', key: 'videos', href: '/videos' },
+        ].map(({ icon: Icon, label, key, href }) => (
+          <NavItem key={key} icon={Icon} label={label} active={active === key} href={href} />
         ))}
       </div>
     </div>
