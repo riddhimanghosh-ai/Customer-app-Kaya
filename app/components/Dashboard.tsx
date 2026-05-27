@@ -1,6 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import SharedNavRail from './NavRail';
+import MobileTabBar from './MobileTabBar';
 
 /* Icon Components */
 const Icon = ({ size = 18, children, stroke = 1.4, style }: any) => (
@@ -120,6 +123,29 @@ const IconCheck = (p: any) => (
   </Icon>
 );
 
+const IconSummary = (p: any) => (
+  <Icon {...p}>
+    <path d="M5 4 H15 L19 8 V20 H5 Z" />
+    <path d="M8 10 H16 M8 13 H16 M8 16 H12" />
+    <GoldNode cx={15} cy={8} />
+  </Icon>
+);
+
+const IconPackage = (p: any) => (
+  <Icon {...p}>
+    <path d="M3.5 7 L12 4 L20.5 7 V17 L12 20 L3.5 17 Z" />
+    <path d="M3.5 7 L12 10 L20.5 7" />
+    <path d="M12 10 V20" />
+    <GoldNode cx={12} cy={10} />
+  </Icon>
+);
+
+const IconChevron = (p: any) => (
+  <Icon {...p}>
+    <path d="M6 9 L12 15 L18 9" />
+  </Icon>
+);
+
 /* Shared Components */
 const Brand = ({ tag = "Skin · Hair · Body" }: any) => (
   <div>
@@ -138,50 +164,21 @@ const NavItem = ({ icon: I, label, active, badge, onClick }: any) => (
   </div>
 );
 
-const NavRail = ({ active = 'dashboard' }: any) => (
-  <div className="nav-rail">
-    <div>
-      <Brand />
+const AccordionSection = ({ label, open, onToggle, children }: any) => (
+  <div style={{ marginTop: 8 }}>
+    <div
+      className="group-label"
+      onClick={onToggle}
+      style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', userSelect: 'none' }}
+    >
+      <span>{label}</span>
+      <IconChevron size={11} style={{ transition: 'transform 0.2s', transform: open ? 'rotate(180deg)' : 'rotate(0deg)', opacity: 0.5 }} />
     </div>
-
-    <div style={{ marginTop: 22 }}>
-      <div className="group-label">Care</div>
-      <NavItem icon={IconHome} label="Overview" active={active === 'dashboard'} />
-      <NavItem icon={IconAppt} label="Appointments" badge="2" active={active === 'appointments'} />
-      <NavItem icon={IconMed} label="Medications" badge="4" active={active === 'prescriptions'} />
-      <NavItem icon={IconProgress} label="Progress" active={active === 'before-after'} />
-      <NavItem icon={IconChat} label="Dr. AI" active={active === 'chatbot'} />
-    </div>
-
-    <div style={{ marginTop: 8 }}>
-      <div className="group-label">Membership</div>
-      <NavItem icon={IconRewards} label="Loyalty" active={active === 'loyalty'} />
-      <NavItem icon={IconRefer} label="Referrals" active={active === 'referral'} />
-    </div>
-
-    <div style={{ marginTop: 8 }}>
-      <div className="group-label">Learn</div>
-      <NavItem icon={IconBlog} label="Articles" active={active === 'blogs'} />
-      <NavItem icon={IconVideo} label="Videos" active={active === 'videos'} />
-    </div>
-
-    <div style={{ marginTop: 'auto', borderTop: '1px solid var(--hair)', paddingTop: 14 }}>
-      <div className="row center" style={{ gap: 10 }}>
-        <div style={{
-          width: 32, height: 32,
-          background: 'radial-gradient(circle at 35% 30%, #e6c9a8, #6b4628)',
-          borderRadius: '50%',
-          display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
-          color: 'rgba(255,255,255,0.85)', fontFamily: 'var(--mono)', fontSize: 9, paddingBottom: 4,
-        }}>PR</div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 13, fontWeight: 500 }}>Priya R.</div>
-          <div className="num" style={{ fontSize: 10, color: 'var(--mute)' }}>ID · 8842·G</div>
-        </div>
-      </div>
-    </div>
+    {open && <div>{children}</div>}
   </div>
 );
+
+const NavRail = ({ active = 'dashboard' }: any) => <SharedNavRail active={active} />;
 
 const Topbar = ({ title, subtitle, right }: any) => (
   <div className="topbar">
@@ -258,49 +255,25 @@ const Spark = ({ data, gold, brand, mint }: any) => {
   );
 };
 
-const MobileShell = ({ active = 'home', children, dark }: any) => (
-  <div className={`frame${dark ? ' dark' : ''}`} style={{ display: 'flex', flexDirection: 'column' }}>
-    <div className="statusbar">
-      <span>9:41</span>
-      <span style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-        <span style={{ display: 'inline-block', width: 4, height: 4, background: 'currentColor', borderRadius: '50%' }} />
-        <span style={{ display: 'inline-block', width: 4, height: 4, background: 'currentColor', borderRadius: '50%' }} />
-        <span style={{ display: 'inline-block', width: 4, height: 4, background: 'currentColor', borderRadius: '50%' }} />
-        <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><rect x="0.5" y="0.5" width="13" height="10" rx="2" stroke="currentColor" /><rect x="2" y="2" width="9" height="7" fill="currentColor" /><rect x="14" y="3.5" width="1.5" height="4" rx="0.5" fill="currentColor" /></svg>
-      </span>
+const MobileShell = ({ active = 'home', children, dark }: any) => {
+  return (
+    <div className={`frame${dark ? ' dark' : ''}`} style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+      <div className="statusbar">
+        <span>9:41</span>
+        <span style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+          <span style={{ display: 'inline-block', width: 4, height: 4, background: 'currentColor', borderRadius: '50%' }} />
+          <span style={{ display: 'inline-block', width: 4, height: 4, background: 'currentColor', borderRadius: '50%' }} />
+          <span style={{ display: 'inline-block', width: 4, height: 4, background: 'currentColor', borderRadius: '50%' }} />
+          <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><rect x="0.5" y="0.5" width="13" height="10" rx="2" stroke="currentColor" /><rect x="2" y="2" width="9" height="7" fill="currentColor" /><rect x="14" y="3.5" width="1.5" height="4" rx="0.5" fill="currentColor" /></svg>
+        </span>
+      </div>
+      <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
+        {children}
+      </div>
+      <MobileTabBar active={active} />
     </div>
-    <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
-      {children}
-    </div>
-    <div className="tabbar">
-      <div className={`tab${active === 'home' ? ' active' : ''}`}>
-        <IconHome size={20} stroke={1.4} />
-        <span>Home</span>
-        <span className="dot" />
-      </div>
-      <div className={`tab${active === 'appt' ? ' active' : ''}`}>
-        <IconAppt size={20} stroke={1.4} />
-        <span>Visits</span>
-        <span className="dot" />
-      </div>
-      <div className={`tab${active === 'progress' ? ' active' : ''}`}>
-        <IconProgress size={20} stroke={1.4} />
-        <span>Progress</span>
-        <span className="dot" />
-      </div>
-      <div className={`tab${active === 'rewards' ? ' active' : ''}`}>
-        <IconRewards size={20} stroke={1.4} />
-        <span>Rewards</span>
-        <span className="dot" />
-      </div>
-      <div className={`tab${active === 'ai' ? ' active' : ''}`}>
-        <IconChat size={20} stroke={1.4} />
-        <span>Dr. AI</span>
-        <span className="dot" />
-      </div>
-    </div>
-  </div>
-);
+  );
+};
 
 const DashboardDesktop = () => {
   const today = "Wed · 27 May";
@@ -333,13 +306,13 @@ const DashboardDesktop = () => {
 
         <div className="row" style={{ padding: 'var(--pad-4) var(--pad-4) 0', gap: 0 }}>
           <div style={{ flex: 1.2, paddingRight: 32, borderRight: '1px solid var(--hair)' }}>
-            <div className="eyebrow">12-week protocol · cleared</div>
+            <div className="eyebrow">Ongoing care · Mar 14 – Jun 18</div>
             <div className="display h2" style={{ marginTop: 12 }}>
-              Pigmentation down <em>34%</em>.<br />
-              Texture even. <em>On track</em> for review in <em>3</em> weeks.
+              9 sessions completed.<br />
+              Regimen <em>94% compliant</em>. Review in <em>3 weeks</em>.
             </div>
             <div className="row" style={{ marginTop: 22, gap: 24 }}>
-              <Stat label="Treatment week" value={<AnimatedNum value={9} />} suffix="/ 12" />
+              <Stat label="Sessions done" value={<AnimatedNum value={9} />} suffix="/ 12" />
               <div className="vr" style={{ height: 56, alignSelf: 'center' }} />
               <Stat label="Compliance" value={<AnimatedNum value={94} />} suffix="%" />
               <div className="vr" style={{ height: 56, alignSelf: 'center' }} />
@@ -348,7 +321,7 @@ const DashboardDesktop = () => {
           </div>
           <div style={{ flex: 1, paddingLeft: 32 }}>
             <div className="eyebrow gold dot">Next visit</div>
-            <div className="h3" style={{ marginTop: 12 }}>Dr. Ananya Mehra</div>
+            <div className="h3" style={{ marginTop: 12 }}>Dr. Ananya Sharma</div>
             <div className="muted" style={{ marginTop: 4 }}>Hydrafacial · Phase 2 follow-up</div>
             <div className="row between center" style={{ marginTop: 16 }}>
               <div>
@@ -490,86 +463,356 @@ const DashboardDesktop = () => {
 };
 
 const DashboardMobile = () => {
-  const medsShort = [
-    ['Tretinoin 0.025%', 'PM · pea-sized', true],
-    ['Vitamin C serum', 'AM · 3 drops', true],
-    ['Azelaic acid 15%', 'PM · spot', false]
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState('overview');
+  const [meds, setMeds] = useState([
+    { t: 'Tretinoin 0.025% Cream', sub: 'PM · pea-sized amount', taken: true, time: '08:00' },
+    { t: 'Kaya Antox Vit-C Serum', sub: 'AM · 3 drops', taken: true, time: '08:05' },
+    { t: 'Kaya Niacinamide 10% Serum', sub: 'AM + PM', taken: true, time: '12:30' },
+    { t: 'Kaya Daily Shield SPF 50', sub: 'AM · reapply every 2h', taken: true, time: '14:00' },
+    { t: 'Azelaic Acid 15% Gel', sub: 'PM · spot treatment', taken: false, time: '21:00' },
+    { t: 'Kaya Replenishing Night Cream', sub: 'PM · last step', taken: false, time: '22:00' },
+  ]);
+  const toggleMed = (i: number) => setMeds(m => m.map((x, j) => j === i ? { ...x, taken: !x.taken } : x));
+  const takenCount = meds.filter(m => m.taken).length;
+
+  const pageTabs = [
+    { id: 'overview', label: 'Overview' },
+    { id: 'sessions', label: 'Sessions' },
+    { id: 'progress', label: 'Progress' },
+    { id: 'rx', label: 'Rx' },
+    { id: 'offers', label: 'Offers' },
+    { id: 'purchases', label: 'Purchases' },
+  ];
+
+  const summaries = [
+    { date: '13 May', type: 'Consultation', title: 'Post-peel review · Dr. Sharma', preview: 'Skin tone improving. Phase 3 HydraFacial sessions initiated. Follow up Jun 18.' },
+    { date: '30 Apr', type: 'Treatment', title: 'Kaya Chemical Peel Treatment · TCA', preview: 'Mild erythema, resolved within 24h. Phase 2 complete.' },
+    { date: '14 Apr', type: 'Treatment', title: 'Kaya HydraFacial · Phase 3 · Session 1', preview: 'Deep cleanse + hydration infusion. Skin responded well.' },
+  ];
+
+  const products = [
+    { name: 'Tretinoin 0.025% Cream', qty: '15g · 12 days left', low: true },
+    { name: 'Kaya Antox Vit-C Serum', qty: '30ml · 18 days left', low: false },
+    { name: 'Kaya Daily Shield SPF 50', qty: '50ml · runs out Jun 20', low: false },
+  ];
+
+  const reminders = [
+    { text: 'No retinoids 48h before Sat 31 session', hi: true, icon: '⚠️' },
+    { text: 'Photo log overdue · last upload 9 days ago', hi: false, icon: '📸' },
+  ];
+
+  const offers = [
+    { title: '20% off Hydrafacial', subtitle: 'Book before June 30 · Save ₹800', tag: 'MEMBER', color: '#f0e2d4' },
+    { title: 'Free skin analysis', subtitle: 'With any treatment in June', tag: 'LIMITED', color: '#d4ecd5' },
+    { title: 'Refer & earn ₹500', subtitle: 'For every friend who completes a booking', tag: 'REFERRAL', color: '#d5dff0' },
   ];
 
   return (
     <MobileShell active="home">
-      <div style={{ padding: '16px 20px 100px', height: '100%', overflow: 'auto' }}>
-        <div className="row between center">
-          <div>
-            <div className="eyebrow">27 May · Wed</div>
-            <div className="display" style={{ fontSize: 28, marginTop: 4 }}>
-              Hello, <em>Priya</em>
-            </div>
-          </div>
-          <div style={{
-            width: 36, height: 36,
-            background: 'radial-gradient(circle at 35% 30%, #e6c9a8, #6b4628)',
-            borderRadius: '50%'
-          }} />
-        </div>
+      <div style={{ height: '100%', overflow: 'auto' }}>
 
-        <div className="panel" style={{ marginTop: 16, padding: 18, background: 'linear-gradient(135deg, var(--brand) 0%, var(--brand-deep) 100%)', color: 'white', borderColor: 'transparent' }}>
-          <div className="eyebrow" style={{ color: 'rgba(255,255,255,0.7)' }}>Next visit · in 4 days</div>
-          <div className="h4" style={{ color: 'white', marginTop: 6, fontSize: 17 }}>Dr. Anika Mehra</div>
-          <div style={{ color: 'rgba(255,255,255,0.85)', fontSize: 12, marginTop: 2 }}>Hydrafacial · Phase 2</div>
-          <div className="row between center" style={{ marginTop: 14 }}>
-            <div className="num" style={{ fontSize: 22, letterSpacing: '-0.02em' }}>Sat 31 · 11:30</div>
-            <button className="btn sm" style={{ background: 'white', borderColor: 'white', color: 'var(--brand)', boxShadow: 'none' }}>Confirm</button>
-          </div>
-        </div>
-
-        <div className="row" style={{ marginTop: 14, gap: 10 }}>
-          <div className="panel" style={{ flex: 1, padding: 14 }}>
-            <span className="icon-chip sm"><IconProgress size={14} /></span>
-            <div className="eyebrow" style={{ marginTop: 10 }}>Week</div>
-            <div className="num" style={{ fontSize: 24, marginTop: 2 }}>9<span style={{ color: 'var(--mute)', fontSize: 12 }}>/12</span></div>
-            <div style={{ marginTop: 6 }}><AnimatedMeter pct={75} brand /></div>
-          </div>
-          <div className="panel" style={{ flex: 1, padding: 14 }}>
-            <span className="icon-chip sm mint"><IconCheck size={14} /></span>
-            <div className="eyebrow" style={{ marginTop: 10 }}>Pigment</div>
-            <div className="num" style={{ fontSize: 24, marginTop: 2 }}>−34<span style={{ fontSize: 12, color: 'var(--mute)' }}>%</span></div>
-            <Spark data={[40, 35, 30, 28, 25, 22, 20, 18]} brand />
-          </div>
-        </div>
-
-        <div className="panel" style={{ marginTop: 14, padding: 16 }}>
-          <div className="row between center">
-            <div className="eyebrow">Today · regimen</div>
-            <div className="num" style={{ fontSize: 12, color: 'var(--mute)' }}>4 / 6</div>
-          </div>
-          <div className="col" style={{ marginTop: 12, gap: 8 }}>
-            {medsShort.map(([t, s, done], i) => (
-              <div key={i} className="row center" style={{ gap: 10 }}>
-                <div style={{
-                  width: 16, height: 16, borderRadius: 2,
-                  border: '1px solid ' + (done ? 'var(--ink)' : 'var(--hair-2)'),
-                  background: done ? 'var(--ink)' : 'transparent',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: 'var(--paper)'
-                }}>{done && <IconCheck size={10} />}</div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 13, fontWeight: 500, textDecoration: done ? 'line-through' : 'none', color: done ? 'var(--mute)' : 'var(--ink)' }}>{t}</div>
-                  <div style={{ fontSize: 11, color: 'var(--mute-2)' }}>{s}</div>
-                </div>
+        {/* Profile Header */}
+        <div style={{
+          background: 'linear-gradient(135deg, #7a3b28 0%, #a0522d 50%, #6b3520 100%)',
+          padding: '18px 20px 0',
+          color: 'white',
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+              <div style={{
+                width: 46, height: 46,
+                background: 'radial-gradient(circle at 35% 30%, #e6c9a8, #6b4628)',
+                borderRadius: '50%',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontFamily: 'var(--mono)', fontSize: 13, fontWeight: 600,
+                border: '2px solid rgba(255,255,255,0.25)',
+                flexShrink: 0,
+              }}>PR</div>
+              <div>
+                <div style={{ fontSize: 17, fontWeight: 600, letterSpacing: '-0.01em' }}>Priya R.</div>
+                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.65)', fontFamily: 'var(--mono)', marginTop: 1 }}>ID · 8842-G</div>
               </div>
-            ))}
+            </div>
+            <div style={{
+              background: '#C9A84C',
+              fontSize: 9, fontWeight: 700, letterSpacing: '0.07em',
+              padding: '4px 10px', borderRadius: 20, marginTop: 2,
+            }}>GOLD</div>
+          </div>
+          <div style={{ display: 'flex', gap: 14, marginTop: 12, paddingBottom: 14, fontSize: 10, color: 'rgba(255,255,255,0.75)', flexWrap: 'wrap' }}>
+            <span>📞 +91 98XX XXXX 21</span>
+            <span>📍 Bandra West, Mumbai</span>
           </div>
         </div>
 
-        <div className="panel" style={{ marginTop: 14, padding: 16 }}>
-          <div className="row between center">
-            <div className="eyebrow">Loyalty</div>
-            <div className="tier-chip"><span className="swatch gold" /> Gold</div>
-          </div>
-          <div className="num" style={{ fontSize: 32, marginTop: 6 }}>2,840 <span style={{ fontSize: 12, color: 'var(--mute)' }}>pts</span></div>
-          <div className="muted" style={{ fontSize: 11, marginTop: 2 }}>660 to Elite</div>
-          <div style={{ marginTop: 10 }}><AnimatedMeter pct={81} gold /></div>
+        {/* Stats Strip */}
+        <div style={{
+          display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
+          background: 'var(--paper-2)',
+          borderBottom: '1px solid var(--hair)',
+        }}>
+          {[
+            { label: 'Sessions', val: '9' },
+            { label: 'Packages', val: '2' },
+            { label: 'Photos', val: '5' },
+            { label: 'Compliance', val: '94%' },
+          ].map((s, i) => (
+            <div key={i} style={{
+              padding: '10px 4px', textAlign: 'center',
+              borderRight: i < 3 ? '1px solid var(--hair)' : 'none',
+            }}>
+              <div className="num" style={{ fontSize: 17 }}>{s.val}</div>
+              <div style={{ fontSize: 9, color: 'var(--mute)', marginTop: 2 }}>{s.label}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* In-page Tab Navigation */}
+        <div style={{
+          display: 'flex', overflowX: 'auto',
+          borderBottom: '1px solid var(--hair)',
+          background: 'var(--paper)',
+          scrollbarWidth: 'none',
+        }}>
+          {pageTabs.map(t => (
+            <button key={t.id} onClick={() => setActiveTab(t.id)} style={{
+              flexShrink: 0, padding: '9px 16px',
+              background: 'none', border: 'none',
+              borderBottom: activeTab === t.id ? '2px solid var(--brand)' : '2px solid transparent',
+              color: activeTab === t.id ? 'var(--brand)' : 'var(--mute)',
+              fontSize: 12, fontWeight: activeTab === t.id ? 600 : 400,
+              cursor: 'pointer', letterSpacing: '0.02em',
+            }}>{t.label}</button>
+          ))}
+        </div>
+
+        {/* Tab Content */}
+        <div style={{ padding: '16px 16px 100px' }}>
+
+          {activeTab === 'overview' && <>
+            <div style={{ marginBottom: 14 }}>
+              <div style={{ fontSize: 21, fontWeight: 600, letterSpacing: '-0.01em' }}>Hi Priya 👋</div>
+              <div style={{ fontSize: 12, color: 'var(--mute)', marginTop: 2 }}>27 May · Wednesday</div>
+            </div>
+
+            {/* Next appointment */}
+            <div className="panel" style={{ padding: 16, background: 'linear-gradient(135deg, var(--brand) 0%, var(--brand-deep) 100%)', color: 'white', borderColor: 'transparent' }}>
+              <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.7)', fontWeight: 600, letterSpacing: '0.06em' }}>NEXT VISIT · IN 4 DAYS</div>
+              <div style={{ color: 'white', marginTop: 6, fontSize: 15, fontWeight: 600 }}>Dr. Ananya Sharma</div>
+              <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: 11, marginTop: 2 }}>Hydrafacial · Phase 2 · Bandra West</div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 12 }}>
+                <div className="num" style={{ fontSize: 20, letterSpacing: '-0.02em' }}>Sat 31 · 11:30</div>
+                <button className="btn sm" style={{ background: 'white', borderColor: 'white', color: 'var(--brand)', boxShadow: 'none' }}>Confirm</button>
+              </div>
+            </div>
+
+            {/* Quick Action Cards */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 12 }}>
+              {[
+                { icon: '📋', label: 'Session History', sub: '9 sessions total', action: () => router.push('/sessions') },
+                { icon: '📄', label: 'Summary', sub: 'Session summaries', action: () => router.push('/summary') },
+                { icon: '💊', label: 'My Rx', sub: '6 items active', action: () => router.push('/prescriptions') },
+                { icon: '🏅', label: 'Loyalty', sub: 'Gold · 2,840 pts', action: () => router.push('/loyalty') },
+              ].map((card, i) => (
+                <div key={i} className="panel" onClick={card.action} style={{ padding: 14, cursor: 'pointer' }}>
+                  <div style={{ fontSize: 22, marginBottom: 8 }}>{card.icon}</div>
+                  <div style={{ fontSize: 13, fontWeight: 600 }}>{card.label}</div>
+                  <div style={{ fontSize: 10, color: 'var(--mute)', marginTop: 3 }}>{card.sub}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Reminders / Nudges */}
+            <div className="panel" style={{ marginTop: 12, padding: 16 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div className="eyebrow gold dot">Reminders</div>
+                <span style={{ fontSize: 10, color: 'var(--mute)' }}>{reminders.length} active</span>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 12 }}>
+                {reminders.map((r, i) => (
+                  <div key={i} style={{
+                    display: 'flex', alignItems: 'flex-start', gap: 10,
+                    padding: '10px 12px',
+                    background: r.hi ? 'rgba(201,168,76,0.08)' : 'var(--paper-2)',
+                    borderRadius: 'var(--r-3)',
+                    borderLeft: `3px solid ${r.hi ? 'var(--gold)' : 'var(--hair-strong)'}`,
+                  }}>
+                    <span style={{ fontSize: 14 }}>{r.icon}</span>
+                    <div style={{ fontSize: 12, lineHeight: 1.4 }}>{r.text}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>}
+
+          {activeTab === 'sessions' && <>
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ fontSize: 15, fontWeight: 600 }}>Recent sessions</div>
+              <div style={{ fontSize: 12, color: 'var(--mute)', marginTop: 2 }}>9 total · 2 packages active</div>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {summaries.map((s, i) => (
+                <div key={i} className="panel" onClick={() => router.push('/summary')} style={{ padding: 14, cursor: 'pointer' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div className="num" style={{ fontSize: 11, color: 'var(--mute)' }}>{s.date}</div>
+                    <span className="tag" style={{ fontSize: 10 }}>{s.type}</span>
+                  </div>
+                  <div style={{ fontWeight: 500, fontSize: 13, marginTop: 6 }}>{s.title}</div>
+                  <div style={{ fontSize: 11, color: 'var(--mute)', marginTop: 4, lineHeight: 1.4 }}>{s.preview}</div>
+                  <div style={{ fontSize: 11, color: 'var(--brand)', marginTop: 8, fontWeight: 500 }}>View summary →</div>
+                </div>
+              ))}
+            </div>
+            <button className="btn ghost sm" onClick={() => router.push('/sessions')} style={{ marginTop: 12, width: '100%' }}>
+              View all sessions
+            </button>
+          </>}
+
+          {activeTab === 'progress' && <>
+            {/* Compliance */}
+            <div className="panel" style={{ padding: 16, marginBottom: 12 }}>
+              <div className="eyebrow">Regimen compliance</div>
+              <div className="num" style={{ fontSize: 30, marginTop: 6 }}>94<span style={{ fontSize: 12, color: 'var(--mute)' }}>%</span></div>
+              <div style={{ marginTop: 8 }}><AnimatedMeter pct={94} brand /></div>
+              <div style={{ fontSize: 11, color: 'var(--mute)', marginTop: 6 }}>Mar 14 – Jun 18 · {takenCount} of {meds.length} taken today</div>
+            </div>
+
+            {/* Medication tracking */}
+            <div className="panel" style={{ padding: 16 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div className="eyebrow">Today · regimen</div>
+                <div className="num" style={{ fontSize: 12, color: 'var(--mute)' }}>{takenCount} / {meds.length}</div>
+              </div>
+              <div style={{ marginTop: 8 }}><AnimatedMeter pct={(takenCount / meds.length) * 100} /></div>
+              <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 0 }}>
+                {meds.map((m, i) => (
+                  <div key={i} onClick={() => toggleMed(i)} style={{
+                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                    padding: '8px 0', borderBottom: i < meds.length - 1 ? '1px solid var(--hair)' : 'none', cursor: 'pointer',
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <div style={{
+                        width: 16, height: 16, borderRadius: 2, flexShrink: 0,
+                        border: '1px solid ' + (m.taken ? 'var(--ink)' : 'var(--hair-2)'),
+                        background: m.taken ? 'var(--ink)' : 'transparent',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--paper)',
+                      }}>{m.taken && <IconCheck size={10} />}</div>
+                      <div>
+                        <div style={{ fontSize: 13, fontWeight: 500, textDecoration: m.taken ? 'line-through' : 'none', color: m.taken ? 'var(--mute)' : 'var(--ink)' }}>{m.t}</div>
+                        <div style={{ fontSize: 10, color: 'var(--mute-2)' }}>{m.sub}</div>
+                      </div>
+                    </div>
+                    <div className="num" style={{ fontSize: 11, color: 'var(--mute-2)' }}>{m.time}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>}
+
+          {activeTab === 'rx' && <>
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ fontSize: 15, fontWeight: 600 }}>Active prescriptions</div>
+              <div style={{ fontSize: 12, color: 'var(--mute)', marginTop: 2 }}>Prescribed by Dr. Ananya Sharma</div>
+            </div>
+            <div className="panel" style={{ padding: 16, marginBottom: 12 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div className="eyebrow">My products</div>
+                <button className="btn ghost sm">Reorder all</button>
+              </div>
+              <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 0 }}>
+                {products.map((p, i) => (
+                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: i < products.length - 1 ? '1px solid var(--hair)' : 'none' }}>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 13, fontWeight: 500 }}>{p.name}</div>
+                      <div style={{ fontSize: 11, color: p.low ? 'var(--gold)' : 'var(--mute-2)', marginTop: 2 }}>{p.qty}</div>
+                    </div>
+                    {p.low && <button className="btn sm" style={{ fontSize: 10, padding: '4px 10px', height: 28 }}>Order now</button>}
+                  </div>
+                ))}
+              </div>
+              <div style={{ borderTop: '1px solid var(--hair)', marginTop: 8, paddingTop: 12 }}>
+                <a href="https://www.kaya.in/products" target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: 'var(--brand)', fontWeight: 500, textDecoration: 'none' }}>
+                  View more products from Kaya →
+                </a>
+              </div>
+            </div>
+            <div className="panel" style={{ padding: 16 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div className="eyebrow">Loyalty</div>
+                <div className="tier-chip"><span className="swatch gold" /> Gold</div>
+              </div>
+              <div style={{ marginTop: 8, fontSize: 13 }}>3 referrals · <span style={{ color: 'var(--gold)', fontWeight: 600 }}>₹900 saved</span> total</div>
+              <div style={{ fontSize: 11, color: 'var(--mute)', marginTop: 4 }}>5 more referrals to reach Platinum · ₹500 each</div>
+              <div style={{ marginTop: 10 }}><AnimatedMeter pct={38} gold /></div>
+            </div>
+          </>}
+
+          {activeTab === 'purchases' && <>
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ fontSize: 15, fontWeight: 600 }}>My purchases</div>
+              <div style={{ fontSize: 12, color: 'var(--mute)', marginTop: 2 }}>Products, sessions & treatments</div>
+            </div>
+            <div className="panel" style={{ padding: 16, marginBottom: 12 }}>
+              <div className="eyebrow" style={{ marginBottom: 12 }}>Products ordered</div>
+              {[
+                { name: 'Tretinoin 0.025% Cream', date: '02 May 2025', price: '₹580' },
+                { name: 'Kaya Daily Shield SPF 50', date: '14 Mar 2025', price: '₹650' },
+                { name: 'Azelaic Acid 15% Gel', date: '16 Apr 2025', price: '₹490' },
+                { name: 'Kaya Niacinamide 10% Serum', date: '14 Mar 2025', price: '₹420' },
+              ].map((p, i, arr) => (
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: i < arr.length - 1 ? '1px solid var(--hair)' : 'none' }}>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 500 }}>{p.name}</div>
+                    <div style={{ fontSize: 11, color: 'var(--mute)', marginTop: 2 }}>{p.date}</div>
+                  </div>
+                  <div style={{ fontSize: 13, fontWeight: 600 }}>{p.price}</div>
+                </div>
+              ))}
+            </div>
+            <div className="panel" style={{ padding: 16 }}>
+              <div className="eyebrow" style={{ marginBottom: 12 }}>Sessions & treatments</div>
+              {[
+                { name: 'Post-peel review · Dr. Sharma', date: '13 May 2025', price: '₹800', type: 'Consultation' },
+                { name: 'Chemical Peel · TCA · Phase 2', date: '30 Apr 2025', price: '₹2,800', type: 'Treatment' },
+                { name: 'HydraFacial · Phase 3 · Session 1', date: '14 Apr 2025', price: '₹3,200', type: 'Treatment' },
+                { name: 'Consultation · Dr. Ananya Sharma', date: '14 Mar 2025', price: '₹600', type: 'Consultation' },
+              ].map((s, i, arr) => (
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: i < arr.length - 1 ? '1px solid var(--hair)' : 'none' }}>
+                  <div style={{ flex: 1, minWidth: 0, paddingRight: 12 }}>
+                    <div style={{ fontSize: 13, fontWeight: 500 }}>{s.name}</div>
+                    <div style={{ display: 'flex', gap: 6, marginTop: 4, alignItems: 'center' }}>
+                      <span className="tag" style={{ fontSize: 10 }}>{s.type}</span>
+                      <span style={{ fontSize: 11, color: 'var(--mute)' }}>{s.date}</span>
+                    </div>
+                  </div>
+                  <div style={{ fontSize: 13, fontWeight: 600, flexShrink: 0 }}>{s.price}</div>
+                </div>
+              ))}
+            </div>
+          </>}
+
+          {activeTab === 'offers' && <>
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ fontSize: 15, fontWeight: 600 }}>Latest offers</div>
+              <div style={{ fontSize: 12, color: 'var(--mute)', marginTop: 2 }}>Exclusive Gold member deals</div>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {offers.map((o, i) => (
+                <div key={i} style={{ borderRadius: 'var(--r-4)', overflow: 'hidden', border: '1px solid var(--hair)' }}>
+                  <div style={{ background: o.color, padding: '18px 16px' }}>
+                    <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.06em', background: 'rgba(255,255,255,0.7)', padding: '2px 8px', borderRadius: 10 }}>{o.tag}</span>
+                    <div style={{ fontSize: 16, fontWeight: 700, marginTop: 10, letterSpacing: '-0.01em' }}>{o.title}</div>
+                    <div style={{ fontSize: 12, color: 'var(--mute)', marginTop: 4 }}>{o.subtitle}</div>
+                  </div>
+                  <div style={{ padding: '10px 16px', background: 'var(--paper)', display: 'flex', justifyContent: 'flex-end' }}>
+                    <button className="btn sm" style={{ fontSize: 11 }}>Claim offer</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>}
+
         </div>
       </div>
     </MobileShell>
@@ -577,21 +820,10 @@ const DashboardMobile = () => {
 };
 
 export default function Dashboard() {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1024);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  if (isMobile) {
-    return <DashboardMobile />;
-  }
-
-  return <DashboardDesktop />;
+  return (
+    <>
+      <div className="desktop-only"><DashboardDesktop /></div>
+      <div className="mobile-only"><DashboardMobile /></div>
+    </>
+  );
 }

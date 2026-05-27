@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const BrandLockup = ({ size = 26, sub = false }: { size?: number; sub?: boolean }) => (
   <div>
@@ -34,6 +35,7 @@ const IconRewards = ({ size = 16 }) => (
 );
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState('priya.r@gmail.com');
   const [pw, setPw] = useState('');
   const [touched, setTouched] = useState({ email: false, pw: false });
@@ -48,14 +50,15 @@ export default function LoginPage() {
     setTouched({ email: true, pw: true });
     if (emailValid && pwValid) {
       setSuccess(true);
-      setTimeout(() => setSuccess(false), 2200);
+      localStorage.setItem('user', JSON.stringify({ email, name: 'Priya R.' }));
+      setTimeout(() => router.push('/dashboard'), 800);
     }
   };
 
   return (
     <div className="frame row" style={{ height: '100vh' }}>
-      {/* Left — editorial visual */}
-      <div style={{
+      {/* Left — editorial visual (hidden on mobile) */}
+      <div className="desktop-only" style={{
         flex: 1.1,
         padding: '48px 56px',
         background: `
@@ -77,7 +80,7 @@ export default function LoginPage() {
             to your <span style={{ color: 'var(--brand)' }}>protocol</span>.
           </div>
           <div className="muted" style={{ fontSize: 15, marginTop: 22, maxWidth: 380 }}>
-            Three weeks until your next review with Dr. Mehra.
+            Three weeks until your next review with Dr. Sharma.
           </div>
 
           {/* live stats */}
@@ -113,11 +116,12 @@ export default function LoginPage() {
       {/* Right — form */}
       <div style={{
         flex: 1,
-        padding: '64px 80px',
+        padding: 'clamp(32px, 8vw, 64px) clamp(24px, 8vw, 80px)',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         background: 'var(--paper-2)',
+        minWidth: 0,
       }}>
         <div className="eyebrow">Sign in</div>
         <div className="display" style={{ fontSize: 40, marginTop: 12 }}>

@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
-const Icon = ({ children, size = 24, className = '' }: { children: React.ReactNode; size?: number; className?: string }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+const Icon = ({ children, size = 24, className = '' , style }: { children: React.ReactNode; size?: number; className?: string; style?: React.CSSProperties }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} style={style}>
     {children}
   </svg>
 );
@@ -95,6 +96,13 @@ const IconSearch = ({ size = 24 }: { size?: number }) => (
   </Icon>
 );
 
+const IconSummary = ({ size = 24 }: { size?: number }) => (
+  <Icon size={size}>
+    <path d="M5 4 H15 L19 8 V20 H5 Z"></path>
+    <path d="M8 10 H16 M8 13 H16 M8 16 H12"></path>
+  </Icon>
+);
+
 const Brand = () => (
   <div style={{ padding: 'var(--pad-3)', borderBottom: '1px solid var(--hair)' }}>
     <div style={{ display: 'grid', placeContent: 'center', width: 40, height: 40, background: 'var(--brand)', borderRadius: 8, fontSize: 20, fontWeight: 'bold', color: 'var(--paper)' }}>K</div>
@@ -159,44 +167,40 @@ const NavRail = ({ active }: { active: string }) => (
   </div>
 );
 
-const MobileShell = ({ children, active = '' }: { children: React.ReactNode; active?: string }) => (
-  <div style={{ background: 'var(--ink)', color: 'var(--paper)', height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-    <div style={{ flex: 1, overflow: 'auto' }}>{children}</div>
-    <div style={{
-      display: 'grid',
-      gridTemplateColumns: 'repeat(4, 1fr)',
-      gap: 0,
-      borderTop: '1px solid rgba(255,255,255,0.12)',
-      background: 'var(--ink)',
-      padding: '8px 0',
-    }}>
-      {[
-        { k: 'home', icon: IconHome, label: 'Home', href: '/' },
-        { k: 'appointments', icon: IconAppt, label: 'Sessions', href: '/sessions' },
-        { k: 'rewards', icon: IconRewards, label: 'Loyalty', href: '/loyalty' },
-        { k: 'chat', icon: IconChat, label: 'Chat', href: '/chat' },
-      ].map((item) => (
-        <Link key={item.k} href={item.href}>
-          <div style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: '8px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 4,
-            fontSize: 10,
-            color: active === item.k ? 'var(--gold)' : 'var(--mute-2)',
-          }}>
-            <item.icon size={18} />
-            {item.label}
-          </div>
-        </Link>
-      ))}
+const MobileShell = ({ active = '', children, dark }: { children: React.ReactNode; active?: string; dark?: boolean }) => {
+  const router = useRouter();
+  return (
+    <div className={`frame${dark ? ' dark' : ''}`} style={{ display: 'flex', flexDirection: 'column' }}>
+      <div className="statusbar">
+        <span>9:41</span>
+        <span style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+          <span style={{ display: 'inline-block', width: 4, height: 4, background: 'currentColor', borderRadius: '50%' }} />
+          <span style={{ display: 'inline-block', width: 4, height: 4, background: 'currentColor', borderRadius: '50%' }} />
+          <span style={{ display: 'inline-block', width: 4, height: 4, background: 'currentColor', borderRadius: '50%' }} />
+          <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><rect x="0.5" y="0.5" width="13" height="10" rx="2" stroke="currentColor" /><rect x="2" y="2" width="9" height="7" fill="currentColor" /><rect x="14" y="3.5" width="1.5" height="4" rx="0.5" fill="currentColor" /></svg>
+        </span>
+      </div>
+      <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>{children}</div>
+      <div className="tabbar">
+        <div className={`tab${active === 'home' ? ' active' : ''}`} onClick={() => router.push('/dashboard')} style={{ cursor: 'pointer' }}>
+          <IconHome size={20} /><span>Home</span><span className="dot" />
+        </div>
+        <div className={`tab${active === 'appt' ? ' active' : ''}`} onClick={() => router.push('/sessions')} style={{ cursor: 'pointer' }}>
+          <IconAppt size={20} /><span>Visits</span><span className="dot" />
+        </div>
+        <div className={`tab${active === 'progress' ? ' active' : ''}`} onClick={() => router.push('/before-after')} style={{ cursor: 'pointer' }}>
+          <IconProgress size={20} /><span>Progress</span><span className="dot" />
+        </div>
+        <div className={`tab${active === 'summary' ? ' active' : ''}`} onClick={() => router.push('/summary')} style={{ cursor: 'pointer' }}>
+          <IconSummary size={20} /><span>Summary</span><span className="dot" />
+        </div>
+        <div className={`tab${active === 'ai' ? ' active' : ''}`} onClick={() => router.push('/chatbot')} style={{ cursor: 'pointer' }}>
+          <IconChat size={20} /><span>Dr. AI</span><span className="dot" />
+        </div>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const SUGGESTED = [
   "How long until I see results from tretinoin?",
@@ -206,9 +210,9 @@ const SUGGESTED = [
 ];
 
 const SEED_MSGS = [
-  { from: 'ai', text: "I'm Dr. AI — your dermatology guide. I can help with skincare questions, explain your protocol, or summarise visit notes. I'm not a substitute for Dr. Mehra's clinical care." },
+  { from: 'ai', text: "I'm Dr. AI — your dermatology guide. I can help with skincare questions, explain your protocol, or summarise visit notes. I'm not a substitute for Dr. Sharma's clinical care." },
   { from: 'user', text: "Why is my skin flaking around my nose at week 9?" },
-  { from: 'ai', text: "At week 9 of a tretinoin protocol, low-grade desquamation around the alae nasi is common — your stratum corneum is turning over faster than it can hydrate.\n\nThree things help:\n\n1. Buffer with a ceramide-rich moisturiser 20 minutes after retinoid.\n2. Skip retinoid on flaky nights — frequency, not strength, drives tolerance.\n3. Avoid mechanical exfoliation entirely until resolved.\n\nIf flaking persists past 14 days, message Dr. Mehra through your portal." },
+  { from: 'ai', text: "At week 9 of a tretinoin protocol, low-grade desquamation around the alae nasi is common — your stratum corneum is turning over faster than it can hydrate.\n\nThree things help:\n\n1. Buffer with a ceramide-rich moisturiser 20 minutes after retinoid.\n2. Skip retinoid on flaky nights — frequency, not strength, drives tolerance.\n3. Avoid mechanical exfoliation entirely until resolved.\n\nIf flaking persists past 14 days, message Dr. Sharma through your portal." },
 ];
 
 const ChatDesktop = () => {
@@ -227,7 +231,7 @@ const ChatDesktop = () => {
     setInput('');
     setLoading(true);
     setTimeout(() => {
-      setMsgs((m) => [...m, { from: 'ai', text: "Thanks for the question. For detailed medical advice, please consult Dr. Mehra during your next visit." }]);
+      setMsgs((m) => [...m, { from: 'ai', text: "Thanks for the question. For detailed medical advice, please consult Dr. Sharma during your next visit." }]);
       setLoading(false);
     }, 1000);
   };
@@ -259,7 +263,7 @@ const ChatDesktop = () => {
           <div className="row center" style={{ gap: 8 }}>
             <span className="tag signal"><span style={{ display: 'inline-block', width: 6, height: 6, background: 'var(--gold)', borderRadius: '50%', marginRight: 4, animation: 'pulse 1.5s ease-in-out infinite' }} /> Live</span>
             <button className="btn ghost sm">History</button>
-            <button className="btn ghost sm">Message Dr. Mehra</button>
+            <button className="btn ghost sm">Message Dr. Sharma</button>
           </div>
         </div>
 
@@ -341,7 +345,7 @@ const ChatDesktop = () => {
                 </button>
               </div>
               <div className="muted" style={{ fontSize: 10, marginTop: 8, fontFamily: 'var(--mono)', letterSpacing: '0.06em' }}>
-                · Dr. AI provides educational guidance, not medical diagnosis. Always defer to Dr. Mehra for clinical decisions.
+                · Dr. AI provides educational guidance, not medical diagnosis. Always defer to Dr. Sharma for clinical decisions.
               </div>
             </div>
           </div>
@@ -399,13 +403,13 @@ const ChatMobile = () => {
     setInput('');
     setLoading(true);
     setTimeout(() => {
-      setMsgs((m) => [...m, { from: 'ai', text: "Thanks for the question. For detailed medical advice, please consult Dr. Mehra." }]);
+      setMsgs((m) => [...m, { from: 'ai', text: "Thanks for the question. For detailed medical advice, please consult Dr. Sharma." }]);
       setLoading(false);
     }, 1000);
   };
 
   return (
-    <MobileShell active="chat">
+    <MobileShell active="ai" dark>
       <div style={{ padding: '8px 16px 6px', display: 'flex', alignItems: 'center', gap: 12, borderBottom: '1px solid var(--hair)' }}>
         <div style={{ width: 38, height: 38, borderRadius: 6, background: 'var(--ink)', color: 'var(--paper)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', fontFamily: 'var(--serif)', fontSize: 16, fontStyle: 'italic' }}>
           ai
@@ -415,7 +419,7 @@ const ChatMobile = () => {
           <div className="h4" style={{ fontSize: 14 }}>Dr. AI</div>
           <div className="eyebrow"><span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: 'var(--mint)', marginRight: 6 }} />online · always available</div>
         </div>
-        <button className="btn ghost sm" style={{ height: 32, padding: '0 10px', fontSize: 11 }}>Dr. Mehra</button>
+        <button className="btn ghost sm" style={{ height: 32, padding: '0 10px', fontSize: 11 }}>Dr. Sharma</button>
       </div>
 
       <div ref={scrollRef} style={{ flex: 1, overflow: 'auto', padding: 16, paddingBottom: 110, height: 'calc(100% - 64px)' }}>
@@ -490,14 +494,10 @@ const ChatMobile = () => {
 };
 
 export default function ChatPage() {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  return isMobile ? <ChatMobile /> : <ChatDesktop />;
+  return (
+    <>
+      <div className="desktop-only"><ChatDesktop /></div>
+      <div className="mobile-only"><ChatMobile /></div>
+    </>
+  );
 }

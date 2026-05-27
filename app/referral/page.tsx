@@ -1,10 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import SharedNavRail from '../components/NavRail';
+import MobileTabBar from '../components/MobileTabBar';
 
-const Icon = ({ children, size = 24, className = '' }: { children: React.ReactNode; size?: number; className?: string }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+const Icon = ({ children, size = 24, className = '' , style }: { children: React.ReactNode; size?: number; className?: string; style?: React.CSSProperties }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} style={style}>
     {children}
   </svg>
 );
@@ -97,17 +100,24 @@ const IconVideo = ({ size = 24 }: { size?: number }) => (
   </Icon>
 );
 
-const IconBell = ({ size = 24 }: { size?: number }) => (
-  <Icon size={size}>
+const IconBell = ({ size = 24, style }: { size?: number; style?: React.CSSProperties }) => (
+  <Icon size={size} style={style}>
     <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
     <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
   </Icon>
 );
 
-const IconSearch = ({ size = 24 }: { size?: number }) => (
-  <Icon size={size}>
+const IconSearch = ({ size = 24, style }: { size?: number; style?: React.CSSProperties }) => (
+  <Icon size={size} style={style}>
     <circle cx="11" cy="11" r="8"></circle>
     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </Icon>
+);
+
+const IconSummary = ({ size = 24 }: { size?: number }) => (
+  <Icon size={size}>
+    <path d="M5 4 H15 L19 8 V20 H5 Z"></path>
+    <path d="M8 10 H16 M8 13 H16 M8 16 H12"></path>
   </Icon>
 );
 
@@ -139,41 +149,7 @@ const NavItem = ({ icon: Icon, label, active = false, href = '#' }: { icon: Reac
   </Link>
 );
 
-const NavRail = ({ active }: { active: string }) => (
-  <div style={{
-    width: 160,
-    background: 'var(--paper)',
-    borderRight: '1px solid var(--hair)',
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100vh',
-  }}>
-    <Brand />
-    <nav style={{ display: 'flex', flexDirection: 'column', overflow: 'auto' }}>
-      <div style={{ padding: 'var(--pad-2) 0' }}>
-        {[
-          { k: 'home', icon: IconHome, label: 'Home', href: '/' },
-          { k: 'appointments', icon: IconAppt, label: 'Sessions', href: '/sessions' },
-          { k: 'progress', icon: IconProgress, label: 'Progress', href: '/before-after' },
-          { k: 'medications', icon: IconMed, label: 'Medications', href: '/prescriptions' },
-          { k: 'chat', icon: IconChat, label: 'Chat', href: '/chat' },
-        ].map((item) => (
-          <NavItem key={item.k} icon={item.icon} label={item.label} href={item.href} active={active === item.k} />
-        ))}
-      </div>
-      <div style={{ borderTop: '1px solid var(--hair)', padding: 'var(--pad-2) 0' }}>
-        {[
-          { k: 'loyalty', icon: IconRewards, label: 'Loyalty', href: '/loyalty' },
-          { k: 'referral', icon: IconRefer, label: 'Refer', href: '/referral' },
-          { k: 'blog', icon: IconBlog, label: 'Blog', href: '/blog' },
-          { k: 'video', icon: IconVideo, label: 'Videos', href: '/videos' },
-        ].map((item) => (
-          <NavItem key={item.k} icon={item.icon} label={item.label} href={item.href} active={active === item.k} />
-        ))}
-      </div>
-    </nav>
-  </div>
-);
+const NavRail = ({ active }: { active: string }) => <SharedNavRail active={active} />;
 
 const Topbar = ({ subtitle = '', title = '' }: { subtitle?: string; title?: string }) => (
   <div style={{
@@ -199,44 +175,23 @@ const Topbar = ({ subtitle = '', title = '' }: { subtitle?: string; title?: stri
   </div>
 );
 
-const MobileShell = ({ children, active = '' }: { children: React.ReactNode; active?: string }) => (
-  <div style={{ background: 'var(--ink)', color: 'var(--paper)', height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-    <div style={{ flex: 1, overflow: 'auto' }}>{children}</div>
-    <div style={{
-      display: 'grid',
-      gridTemplateColumns: 'repeat(4, 1fr)',
-      gap: 0,
-      borderTop: '1px solid rgba(255,255,255,0.12)',
-      background: 'var(--ink)',
-      padding: '8px 0',
-    }}>
-      {[
-        { k: 'home', icon: IconHome, label: 'Home', href: '/' },
-        { k: 'appointments', icon: IconAppt, label: 'Sessions', href: '/sessions' },
-        { k: 'rewards', icon: IconRewards, label: 'Loyalty', href: '/loyalty' },
-        { k: 'chat', icon: IconChat, label: 'Chat', href: '/chat' },
-      ].map((item) => (
-        <Link key={item.k} href={item.href}>
-          <div style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: '8px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 4,
-            fontSize: 10,
-            color: active === item.k ? 'var(--gold)' : 'var(--mute-2)',
-          }}>
-            <item.icon size={18} />
-            {item.label}
-          </div>
-        </Link>
-      ))}
+const MobileShell = ({ active = '', children, dark }: { children: React.ReactNode; active?: string; dark?: boolean }) => {
+  return (
+    <div className={`frame${dark ? ' dark' : ''}`} style={{ display: 'flex', flexDirection: 'column' }}>
+      <div className="statusbar">
+        <span>9:41</span>
+        <span style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+          <span style={{ display: 'inline-block', width: 4, height: 4, background: 'currentColor', borderRadius: '50%' }} />
+          <span style={{ display: 'inline-block', width: 4, height: 4, background: 'currentColor', borderRadius: '50%' }} />
+          <span style={{ display: 'inline-block', width: 4, height: 4, background: 'currentColor', borderRadius: '50%' }} />
+          <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><rect x="0.5" y="0.5" width="13" height="10" rx="2" stroke="currentColor" /><rect x="2" y="2" width="9" height="7" fill="currentColor" /><rect x="14" y="3.5" width="1.5" height="4" rx="0.5" fill="currentColor" /></svg>
+        </span>
+      </div>
+      <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>{children}</div>
+      <MobileTabBar active={active} />
     </div>
-  </div>
-);
+  );
+};
 
 const AnimatedMeter = ({ pct, gold = false }: { pct: number; gold?: boolean }) => (
   <div style={{ height: 4, background: 'var(--hair-2)', borderRadius: 2, overflow: 'hidden' }}>
@@ -380,7 +335,7 @@ const ReferralMobile = () => {
   const code = "KAYA-PRIYA-8842";
   const [copied, setCopied] = useState(false);
   return (
-    <MobileShell active="rewards">
+    <MobileShell active="home" dark>
       <div style={{ padding: '14px 16px 100px', height: '100%', overflow: 'auto' }}>
         <div className="display" style={{ fontSize: 28 }}>Share what <span style={{ color: 'var(--brand)' }}>works</span>.</div>
 
@@ -466,14 +421,10 @@ const ReferralMobile = () => {
 };
 
 export default function ReferralPage() {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  return isMobile ? <ReferralMobile /> : <ReferralDesktop />;
+  return (
+    <>
+      <div className="desktop-only"><ReferralDesktop /></div>
+      <div className="mobile-only"><ReferralMobile /></div>
+    </>
+  );
 }

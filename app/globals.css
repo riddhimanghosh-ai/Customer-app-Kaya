@@ -428,8 +428,8 @@ body {
   margin-top: 6px;
 }
 .nav-rail .group-label {
-  font: 500 9px var(--mono);
-  letter-spacing: 0.20em;
+  font: 500 11px var(--mono);
+  letter-spacing: 0.16em;
   color: var(--mute-2);
   text-transform: uppercase;
   margin-bottom: 8px;
@@ -439,10 +439,10 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 12px;
+  padding: 11px 12px;
   border-radius: var(--r-2);
   color: var(--ink);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
   cursor: pointer;
   position: relative;
@@ -456,7 +456,7 @@ body {
 }
 .nav-item.active .nav-icon { background: var(--brand-tint); color: var(--brand); }
 .nav-icon {
-  width: 28px; height: 28px;
+  width: 32px; height: 32px;
   border-radius: 8px;
   display: inline-flex; align-items: center; justify-content: center;
   background: rgba(46,60,76,0.06);
@@ -466,7 +466,7 @@ body {
 }
 .nav-item .badge {
   margin-left: auto;
-  font: 500 10px var(--mono);
+  font: 500 11px var(--mono);
   background: var(--brand);
   color: white;
   padding: 2px 7px;
@@ -627,3 +627,23 @@ body {
 .panel.ink   { background: var(--ink); color: var(--paper-2); border-color: var(--ink); }
 .panel.paper-2 { background: var(--paper-tint); border-color: transparent; }
 .panel.brand-fill { background: var(--brand-tint-2); border-color: transparent; }
+
+/* ─── Responsive layout helpers ─── */
+.desktop-only { display: block; height: 100%; }
+.mobile-only  { display: none; height: 100vh; }
+@media (max-width: 1023px) {
+  .desktop-only { display: none !important; }
+  .mobile-only  { display: block !important; }
+}
+
+/* Force-override via toggle button */
+html.force-desktop .desktop-only { display: block !important; height: 100%; }
+html.force-desktop .mobile-only  { display: none !important; }
+html.force-mobile  .desktop-only { display: none !important; }
+html.force-mobile  .mobile-only  { display: block !important; height: 100vh; }
+
+/* View toggle button — always visible */
+.view-toggle-btn { display: flex; }
+
+/* Panels inside dark frames need explicit ink color */
+.frame.dark .panel { color: var(--ink); }

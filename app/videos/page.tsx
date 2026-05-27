@@ -1,14 +1,17 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import SharedNavRail from '../components/NavRail';
+import MobileTabBar from '../components/MobileTabBar';
 
 const VIDEOS = [
-  { dur: '8:24', title: 'Building your morning skincare routine', cat: 'Routines', host: 'Dr. Anika Mehra', views: '124k', big: true },
-  { dur: '12:50', title: 'Understanding melasma: causes and treatment', cat: 'Conditions', host: 'Dr. Anika Mehra', views: '88k' },
+  { dur: '8:24', title: 'Building your morning skincare routine', cat: 'Routines', host: 'Dr. Ananya Sharma', views: '124k', big: true },
+  { dur: '12:50', title: 'Understanding melasma: causes and treatment', cat: 'Conditions', host: 'Dr. Ananya Sharma', views: '88k' },
   { dur: '6:15', title: 'How to use tretinoin without irritation', cat: 'Products', host: 'Dr. Karan Bhatia', views: '212k' },
   { dur: '9:48', title: 'Acne in adults: a clinical walkthrough', cat: 'Conditions', host: 'Dr. Ravi Krishnan', views: '74k' },
-  { dur: '4:32', title: 'SPF: how much, how often, which one', cat: 'Products', host: 'Dr. Anika Mehra', views: '156k' },
+  { dur: '4:32', title: 'SPF: how much, how often, which one', cat: 'Products', host: 'Dr. Ananya Sharma', views: '156k' },
   { dur: '11:20', title: 'What happens during a chemical peel', cat: 'Procedures', host: 'Dr. Ravi Krishnan', views: '92k' },
   { dur: '7:08', title: 'Building barrier resilience in 14 days', cat: 'Routines', host: 'Dr. Karan Bhatia', views: '58k' },
 ];
@@ -24,10 +27,11 @@ const IconBlog = ({ size = 24, ...props }) => <svg width={size} height={size} vi
 const IconVideo = ({ size = 24, ...props }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" {...props}><path d="M2 6l7 5-7 5v-10zM4 4h16a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2z" /></svg>;
 const IconBell = ({ size = 24, ...props }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" {...props}><path d="M18 8a6 6 0 00-6-6 6 6 0 00-6 6v7l-3 3h18l-3-3V8z" /><path d="M9.5 21h5" /></svg>;
 const IconSearch = ({ size = 24, ...props }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" {...props}><circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" /></svg>;
+const IconSummary = ({ size = 24, ...props }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" {...props}><path d="M5 4 H15 L19 8 V20 H5 Z" /><path d="M8 10 H16 M8 13 H16 M8 16 H12" /></svg>;
 
 const Brand = () => <span style={{ fontSize: 14, fontWeight: 700, letterSpacing: '0.04em' }}>KAYA</span>;
 
-const NavItem = ({ icon: Icon, label, active, href = '#' }) => (
+const NavItem = ({ icon: Icon, label, active, href = '#' }: any) => (
   <Link href={href}>
     <div
       style={{
@@ -50,24 +54,9 @@ const NavItem = ({ icon: Icon, label, active, href = '#' }) => (
   </Link>
 );
 
-const NavRail = ({ active }) => (
-  <div style={{ width: 80, background: 'var(--paper)', borderRight: '1px solid var(--hair)', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '16px 0', gap: 4 }}>
-    <div style={{ paddingBottom: 12, marginBottom: 12, borderBottom: '1px solid var(--hair)', width: '100%', textAlign: 'center' }}>
-      <Brand />
-    </div>
-    <NavItem icon={IconHome} label="Home" active={active === 'home'} href="/" />
-    <NavItem icon={IconAppt} label="Sessions" active={active === 'sessions'} href="/sessions" />
-    <NavItem icon={IconMed} label="Prescriptions" active={active === 'prescriptions'} href="/prescriptions" />
-    <NavItem icon={IconProgress} label="Progress" active={active === 'progress'} href="/before-after" />
-    <NavItem icon={IconChat} label="Chat" active={active === 'chat'} href="/chat" />
-    <NavItem icon={IconRewards} label="Loyalty" active={active === 'loyalty'} href="/loyalty" />
-    <NavItem icon={IconRefer} label="Refer" active={active === 'refer'} href="/referral" />
-    <NavItem icon={IconBlog} label="Blog" active={active === 'blog'} href="/blog" />
-    <NavItem icon={IconVideo} label="Videos" active={active === 'videos'} href="/videos" />
-  </div>
-);
+const NavRail = ({ active }: any) => <SharedNavRail active={active} />;
 
-const Topbar = ({ subtitle, title, right }) => (
+const Topbar = ({ subtitle, title, right }: any) => (
   <div className="topbar">
     <div>
       <div className="eyebrow">{subtitle}</div>
@@ -121,7 +110,7 @@ const VideosDesktop = () => {
               <div className="eyebrow gold dot">Featured</div>
               <div className="display" style={{ fontSize: 36, marginTop: 14 }}>{big.title}</div>
               <div className="muted" style={{ fontSize: 14, marginTop: 16, lineHeight: 1.5 }}>
-                Dr. Mehra walks through her clinic's morning skincare framework: cleanse, treat, protect — with the rationale behind each product order and timing.
+                Dr. Sharma walks through her clinic's morning skincare framework: cleanse, treat, protect — with the rationale behind each product order and timing.
               </div>
               <div className="row" style={{ marginTop: 24, gap: 16 }}>
                 <div className="row center" style={{ gap: 8 }}>
@@ -183,27 +172,20 @@ const VideosDesktop = () => {
   );
 };
 
-const MobileShell = ({ active, children }) => {
+const MobileShell = ({ active = '', children }: any) => {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: 'var(--paper)' }}>
-      <div style={{ flex: 1, overflow: 'auto' }}>
-        {children}
+    <div className="frame" style={{ display: 'flex', flexDirection: 'column' }}>
+      <div className="statusbar">
+        <span>9:41</span>
+        <span style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+          <span style={{ display: 'inline-block', width: 4, height: 4, background: 'currentColor', borderRadius: '50%' }} />
+          <span style={{ display: 'inline-block', width: 4, height: 4, background: 'currentColor', borderRadius: '50%' }} />
+          <span style={{ display: 'inline-block', width: 4, height: 4, background: 'currentColor', borderRadius: '50%' }} />
+          <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><rect x="0.5" y="0.5" width="13" height="10" rx="2" stroke="currentColor" /><rect x="2" y="2" width="9" height="7" fill="currentColor" /><rect x="14" y="3.5" width="1.5" height="4" rx="0.5" fill="currentColor" /></svg>
+        </span>
       </div>
-      <div className="tabbar" style={{ display: 'grid', gridTemplateColumns: 'repeat(9, 1fr)', gap: 0, borderTop: '1px solid var(--hair)' }}>
-        {[
-          { icon: IconHome, label: 'Home', key: 'home', href: '/' },
-          { icon: IconAppt, label: 'Sessions', key: 'sessions', href: '/sessions' },
-          { icon: IconMed, label: 'Rx', key: 'prescriptions', href: '/prescriptions' },
-          { icon: IconProgress, label: 'Progress', key: 'progress', href: '/before-after' },
-          { icon: IconChat, label: 'Chat', key: 'chat', href: '/chat' },
-          { icon: IconRewards, label: 'Loyalty', key: 'loyalty', href: '/loyalty' },
-          { icon: IconRefer, label: 'Refer', key: 'refer', href: '/referral' },
-          { icon: IconBlog, label: 'Blog', key: 'blog', href: '/blog' },
-          { icon: IconVideo, label: 'Videos', key: 'videos', href: '/videos' },
-        ].map(({ icon: Icon, label, key, href }) => (
-          <NavItem key={key} icon={Icon} label={label} active={active === key} href={href} />
-        ))}
-      </div>
+      <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>{children}</div>
+      <MobileTabBar active={active} />
     </div>
   );
 };
@@ -212,8 +194,8 @@ const VideosMobile = () => {
   const big = VIDEOS[0];
 
   return (
-    <MobileShell active="videos">
-      <div style={{ padding: '16px 16px 100px' }}>
+    <MobileShell active="home">
+      <div style={{ padding: '16px 16px 100px', height: '100%', overflow: 'auto' }}>
         <div className="eyebrow">Video library</div>
         <div className="display" style={{ fontSize: 32, marginTop: 8 }}>Watch · learn · apply</div>
 
@@ -283,14 +265,10 @@ const VideosMobile = () => {
 };
 
 export default function VideosPage() {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    setIsMobile(window.innerWidth < 768);
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  return isMobile ? <VideosMobile /> : <VideosDesktop />;
+  return (
+    <>
+      <div className="desktop-only"><VideosDesktop /></div>
+      <div className="mobile-only"><VideosMobile /></div>
+    </>
+  );
 }

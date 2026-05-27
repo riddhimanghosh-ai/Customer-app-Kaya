@@ -92,11 +92,10 @@ export default function BlogsPage() {
               key={cat}
               style={{
                 padding: '8px 16px',
-                background: 'white',
+                background: cat === 'All' ? 'var(--brand)' : 'white',
                 border: `1px solid var(--hair)`,
                 borderRadius: '999px',
                 color: cat === 'All' ? 'white' : 'var(--ink)',
-                background: cat === 'All' ? 'var(--brand)' : 'white',
                 fontWeight: 500,
                 fontSize: '13px',
                 cursor: 'pointer',

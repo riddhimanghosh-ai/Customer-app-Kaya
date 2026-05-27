@@ -171,6 +171,18 @@ export function initializeDatabase() {
       published_date TEXT,
       created_at TEXT DEFAULT CURRENT_TIMESTAMP
     );
+
+    CREATE TABLE IF NOT EXISTS guest_bookings (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      phone TEXT NOT NULL,
+      doctor_name TEXT,
+      session_date TEXT,
+      session_time TEXT,
+      treatment_type TEXT,
+      status TEXT DEFAULT 'pending',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
   `);
 }
 

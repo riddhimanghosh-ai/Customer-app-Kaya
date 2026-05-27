@@ -1,10 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import SharedNavRail from '../components/NavRail';
+import MobileTabBar from '../components/MobileTabBar';
 
-const Icon = ({ children, size = 24, className = '' }: { children: React.ReactNode; size?: number; className?: string }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+const Icon = ({ children, size = 24, className = '', style }: { children: React.ReactNode; size?: number; className?: string; style?: React.CSSProperties }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} style={style}>
     {children}
   </svg>
 );
@@ -81,17 +84,24 @@ const IconVideo = ({ size = 24 }: { size?: number }) => (
   </Icon>
 );
 
-const IconBell = ({ size = 24 }: { size?: number }) => (
-  <Icon size={size}>
+const IconBell = ({ size = 24, style }: { size?: number; style?: React.CSSProperties }) => (
+  <Icon size={size} style={style}>
     <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
     <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
   </Icon>
 );
 
-const IconSearch = ({ size = 24 }: { size?: number }) => (
-  <Icon size={size}>
+const IconSearch = ({ size = 24, style }: { size?: number; style?: React.CSSProperties }) => (
+  <Icon size={size} style={style}>
     <circle cx="11" cy="11" r="8"></circle>
     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </Icon>
+);
+
+const IconSummary = ({ size = 24 }: { size?: number }) => (
+  <Icon size={size}>
+    <path d="M5 4 H15 L19 8 V20 H5 Z"></path>
+    <path d="M8 10 H16 M8 13 H16 M8 16 H12"></path>
   </Icon>
 );
 
@@ -123,41 +133,7 @@ const NavItem = ({ icon: Icon, label, active = false, href = '#' }: { icon: Reac
   </Link>
 );
 
-const NavRail = ({ active }: { active: string }) => (
-  <div style={{
-    width: 160,
-    background: 'var(--paper)',
-    borderRight: '1px solid var(--hair)',
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100vh',
-  }}>
-    <Brand />
-    <nav style={{ display: 'flex', flexDirection: 'column', overflow: 'auto' }}>
-      <div style={{ padding: 'var(--pad-2) 0' }}>
-        {[
-          { k: 'home', icon: IconHome, label: 'Home', href: '/' },
-          { k: 'appointments', icon: IconAppt, label: 'Sessions', href: '/sessions' },
-          { k: 'progress', icon: IconProgress, label: 'Progress', href: '/before-after' },
-          { k: 'medications', icon: IconMed, label: 'Medications', href: '/prescriptions' },
-          { k: 'chat', icon: IconChat, label: 'Chat', href: '/chat' },
-        ].map((item) => (
-          <NavItem key={item.k} icon={item.icon} label={item.label} href={item.href} active={active === item.k} />
-        ))}
-      </div>
-      <div style={{ borderTop: '1px solid var(--hair)', padding: 'var(--pad-2) 0' }}>
-        {[
-          { k: 'loyalty', icon: IconRewards, label: 'Loyalty', href: '/loyalty' },
-          { k: 'referral', icon: IconRefer, label: 'Refer', href: '/referral' },
-          { k: 'blog', icon: IconBlog, label: 'Blog', href: '/blog' },
-          { k: 'video', icon: IconVideo, label: 'Videos', href: '/videos' },
-        ].map((item) => (
-          <NavItem key={item.k} icon={item.icon} label={item.label} href={item.href} active={active === item.k} />
-        ))}
-      </div>
-    </nav>
-  </div>
-);
+const NavRail = ({ active }: { active: string }) => <SharedNavRail active={active} />;
 
 const Topbar = ({ subtitle = '', title = '', right }: { subtitle?: string; title?: string; right?: React.ReactNode }) => (
   <div style={{
@@ -184,44 +160,23 @@ const Topbar = ({ subtitle = '', title = '', right }: { subtitle?: string; title
   </div>
 );
 
-const MobileShell = ({ children, active = '' }: { children: React.ReactNode; active?: string }) => (
-  <div style={{ background: 'var(--ink)', color: 'var(--paper)', height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-    <div style={{ flex: 1, overflow: 'auto' }}>{children}</div>
-    <div style={{
-      display: 'grid',
-      gridTemplateColumns: 'repeat(4, 1fr)',
-      gap: 0,
-      borderTop: '1px solid rgba(255,255,255,0.12)',
-      background: 'var(--ink)',
-      padding: '8px 0',
-    }}>
-      {[
-        { k: 'home', icon: IconHome, label: 'Home', href: '/' },
-        { k: 'appointments', icon: IconAppt, label: 'Sessions', href: '/sessions' },
-        { k: 'rewards', icon: IconRewards, label: 'Loyalty', href: '/loyalty' },
-        { k: 'chat', icon: IconChat, label: 'Chat', href: '/chat' },
-      ].map((item) => (
-        <Link key={item.k} href={item.href}>
-          <div style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: '8px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 4,
-            fontSize: 10,
-            color: active === item.k ? 'var(--gold)' : 'var(--mute-2)',
-          }}>
-            <item.icon size={18} />
-            {item.label}
-          </div>
-        </Link>
-      ))}
+const MobileShell = ({ active = '', children, dark }: { children: React.ReactNode; active?: string; dark?: boolean }) => {
+  return (
+    <div className={`frame${dark ? ' dark' : ''}`} style={{ display: 'flex', flexDirection: 'column' }}>
+      <div className="statusbar">
+        <span>9:41</span>
+        <span style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+          <span style={{ display: 'inline-block', width: 4, height: 4, background: 'currentColor', borderRadius: '50%' }} />
+          <span style={{ display: 'inline-block', width: 4, height: 4, background: 'currentColor', borderRadius: '50%' }} />
+          <span style={{ display: 'inline-block', width: 4, height: 4, background: 'currentColor', borderRadius: '50%' }} />
+          <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><rect x="0.5" y="0.5" width="13" height="10" rx="2" stroke="currentColor" /><rect x="2" y="2" width="9" height="7" fill="currentColor" /><rect x="14" y="3.5" width="1.5" height="4" rx="0.5" fill="currentColor" /></svg>
+        </span>
+      </div>
+      <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>{children}</div>
+      <MobileTabBar active={active} />
     </div>
-  </div>
-);
+  );
+};
 
 const Stat = ({ label, value, suffix = '', sub = '' }: { label: string; value: string; suffix?: string; sub?: string }) => (
   <div>
@@ -243,17 +198,17 @@ const AnimatedMeter = ({ pct, gold = false }: { pct: number; gold?: boolean }) =
 );
 
 const MEDS = [
-  { name: 'Tretinoin', dose: '0.025%', form: 'cream', sched: 'PM · qd', start: 'Apr 02', adh: 94, refill: 12, total: 30, qty: '15g', active: true, kind: 'rx' },
-  { name: 'Azelaic acid', dose: '15%', form: 'gel', sched: 'PM · spot', start: 'Apr 16', adh: 88, refill: 8, total: 30, qty: '20g', active: true, kind: 'rx' },
-  { name: 'Niacinamide', dose: '10%', form: 'serum', sched: 'AM + PM', start: 'Mar 14', adh: 96, refill: 22, total: 60, qty: '30ml', active: true, kind: 'otc' },
-  { name: 'Vitamin C', dose: '15%', form: 'serum', sched: 'AM', start: 'Mar 14', adh: 91, refill: 18, total: 60, qty: '30ml', active: true, kind: 'otc' },
-  { name: 'SPF 50', dose: 'PA++++', form: 'sunscreen', sched: 'AM · reapply 2h', start: 'Mar 14', adh: 100, refill: 5, total: 30, qty: '50g', active: true, kind: 'otc' },
+  { name: 'Tretinoin 0.025% Cream', dose: '0.025%', form: 'cream', sched: 'PM · nightly', start: 'Apr 02', adh: 94, daysLeft: 12, total: 30, qty: '15g', active: true, kind: 'rx' },
+  { name: 'Azelaic Acid 15% Gel', dose: '15%', form: 'gel', sched: 'PM · spot treatment', start: 'Apr 16', adh: 88, daysLeft: 8, total: 30, qty: '20g', active: true, kind: 'rx' },
+  { name: 'Kaya Niacinamide 10% Serum', dose: '10%', form: 'serum', sched: 'Morning & Night', start: 'Mar 14', adh: 96, daysLeft: 22, total: 60, qty: '30ml', active: true, kind: 'otc' },
+  { name: 'Kaya Antox Vit-C Serum', dose: '15%', form: 'serum', sched: 'Every morning', start: 'Mar 14', adh: 91, daysLeft: 18, total: 60, qty: '30ml', active: true, kind: 'otc' },
+  { name: 'Kaya Daily Shield SPF 50', dose: 'PA++++', form: 'sunscreen', sched: 'AM · reapply every 2h', start: 'Mar 14', adh: 100, daysLeft: 5, total: 30, qty: '50ml', active: true, kind: 'otc' },
 ];
 
 const PAST_MEDS = [
-  { name: 'Hydroquinone', dose: '4%', period: 'Jan 18 – Mar 14', adh: 87, reason: 'Completed pre-protocol' },
-  { name: 'Doxycycline', dose: '100mg', period: 'Dec 02 – Jan 14', adh: 100, reason: 'Acute flare resolved' },
-  { name: 'Adapalene', dose: '0.1%', period: 'Sep – Nov 2024', adh: 78, reason: 'Replaced w/ tretinoin' },
+  { name: 'Hydroquinone 4% Cream', dose: '4%', period: 'Jan 18 – Mar 14', adh: 87, reason: 'Completed pre-protocol phase' },
+  { name: 'Doxycycline 100mg', dose: '100mg', period: 'Dec 02 – Jan 14', adh: 100, reason: 'Acute flare resolved' },
+  { name: 'Adapalene 0.1% Gel', dose: '0.1%', period: 'Sep – Nov 2024', adh: 78, reason: 'Switched to Tretinoin' },
 ];
 
 const PrescriptionsDesktop = () => {
@@ -321,12 +276,12 @@ const PrescriptionsDesktop = () => {
                   </div>
                 </div>
                 <div style={{ flex: 1 }}>
-                  <div className="num" style={{ fontSize: 13 }}>{m.refill} <span className="muted" style={{ fontSize: 11 }}>/ {m.total} days</span></div>
-                  {m.refill < 15 && <div className="tag alert" style={{ marginTop: 4 }}><span style={{ display: 'inline-block', width: 6, height: 6, background: 'var(--alert)', borderRadius: '50%', marginRight: 4 }} /> low</div>}
+                  <div className="num" style={{ fontSize: 13 }}>{m.daysLeft} <span className="muted" style={{ fontSize: 11 }}>/ {m.total} days</span></div>
+                  {m.daysLeft < 15 && <div className="tag alert" style={{ marginTop: 4 }}><span style={{ display: 'inline-block', width: 6, height: 6, background: 'var(--alert)', borderRadius: '50%', marginRight: 4 }} /> low</div>}
                 </div>
                 <div style={{ flex: 1.2 }} className="row" >
                   <button className="btn ghost sm" style={{ padding: '0 10px' }}>Log dose</button>
-                  {m.refill < 15 && <button className="btn sm" style={{ padding: '0 10px', marginLeft: 6 }}>Refill</button>}
+                  {m.daysLeft < 15 && <button className="btn sm" style={{ padding: '0 10px', marginLeft: 6 }}>Refill</button>}
                 </div>
               </div>
             ))}
@@ -389,6 +344,29 @@ const PrescriptionsMobile = () => (
       <div className="display" style={{ fontSize: 28 }}>Your <span style={{ color: 'var(--brand)' }}>medications</span></div>
       <div className="muted" style={{ fontSize: 12, marginTop: 4 }}>5 active · 94% adherence (14d)</div>
 
+      {/* Diagnosis & treatment plan */}
+      <div className="panel" style={{ marginTop: 16, padding: 16 }}>
+        <div className="eyebrow brand dot" style={{ marginBottom: 10 }}>Problem detected</div>
+        <div style={{ fontSize: 14, fontWeight: 600, lineHeight: 1.35 }}>Post-inflammatory hyperpigmentation + mild inflammatory acne</div>
+        <div style={{ fontSize: 11, color: 'var(--mute)', marginTop: 4 }}>Diagnosed by Dr. Ananya Sharma · Apr 02, 2025</div>
+        <div style={{ borderTop: '1px solid var(--hair)', marginTop: 14, paddingTop: 14 }}>
+          <div className="eyebrow" style={{ marginBottom: 8 }}>Recommended treatments</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {[
+              'Chemical peel series (TCA) · 3 sessions',
+              'HydraFacial · 4 sessions for deep hydration',
+              'Topical retinoid protocol (Tretinoin 0.025%)',
+              'Azelaic acid for spot reduction',
+            ].map((t, i) => (
+              <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'flex-start', fontSize: 12 }}>
+                <span style={{ color: 'var(--brand)', fontWeight: 700, flexShrink: 0, marginTop: 1 }}>·</span>
+                <span style={{ lineHeight: 1.4 }}>{t}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* Today summary */}
       <div className="panel" style={{ marginTop: 16, padding: 18, background: 'var(--brand-tint-2)', borderColor: 'transparent' }}>
         <div className="row between center">
@@ -437,11 +415,11 @@ const PrescriptionsMobile = () => (
           <span className="tag brand">2</span>
         </div>
         <div className="col" style={{ marginTop: 12, gap: 10 }}>
-          {MEDS.filter(m => m.refill < 15).map((m, i) => (
+          {MEDS.filter(m => m.daysLeft < 15).map((m, i) => (
             <div key={i} className="row between center">
               <div>
                 <div style={{ fontSize: 13, fontWeight: 500 }}>{m.name}</div>
-                <div className="muted" style={{ fontSize: 11 }}>{m.refill} days left</div>
+                <div className="muted" style={{ fontSize: 11 }}>{m.daysLeft} days left</div>
               </div>
               <button className="btn sm" style={{ height: 32, padding: '0 14px' }}>Refill</button>
             </div>
@@ -453,14 +431,10 @@ const PrescriptionsMobile = () => (
 );
 
 export default function PrescriptionsPage() {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  return isMobile ? <PrescriptionsMobile /> : <PrescriptionsDesktop />;
+  return (
+    <>
+      <div className="desktop-only"><PrescriptionsDesktop /></div>
+      <div className="mobile-only"><PrescriptionsMobile /></div>
+    </>
+  );
 }

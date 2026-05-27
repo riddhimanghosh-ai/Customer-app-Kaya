@@ -1,6 +1,9 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import SharedNavRail from '../components/NavRail';
+import MobileTabBar from '../components/MobileTabBar';
 
 /* Icons */
 const Icon = ({ size = 18, children, stroke = 1.4, style }: any) => (
@@ -71,6 +74,10 @@ const IconRewards = (p: any) => (
   </Icon>
 );
 
+const IconSummary = (p: any) => (
+  <Icon {...p}><path d="M5 4 H15 L19 8 V20 H5 Z" /><path d="M8 10 H16 M8 13 H16 M8 16 H12" /><GoldNode cx={15} cy={8} /></Icon>
+);
+
 const IconRefer = (p: any) => (
   <Icon {...p}>
     <circle cx="8" cy="9" r="3" />
@@ -130,50 +137,7 @@ const NavItem = ({ icon: I, label, active, badge, onClick }: any) => (
   </div>
 );
 
-const NavRail = ({ active = 'before-after' }: any) => (
-  <div className="nav-rail">
-    <div>
-      <Brand />
-    </div>
-
-    <div style={{ marginTop: 22 }}>
-      <div className="group-label">Care</div>
-      <NavItem icon={IconHome} label="Overview" active={active === 'dashboard'} />
-      <NavItem icon={IconAppt} label="Appointments" badge="2" active={active === 'appointments'} />
-      <NavItem icon={IconMed} label="Medications" badge="4" active={active === 'prescriptions'} />
-      <NavItem icon={IconProgress} label="Progress" active={active === 'before-after'} />
-      <NavItem icon={IconChat} label="Dr. AI" active={active === 'chatbot'} />
-    </div>
-
-    <div style={{ marginTop: 8 }}>
-      <div className="group-label">Membership</div>
-      <NavItem icon={IconRewards} label="Loyalty" active={active === 'loyalty'} />
-      <NavItem icon={IconRefer} label="Referrals" active={active === 'referral'} />
-    </div>
-
-    <div style={{ marginTop: 8 }}>
-      <div className="group-label">Learn</div>
-      <NavItem icon={IconBlog} label="Articles" active={active === 'blogs'} />
-      <NavItem icon={IconVideo} label="Videos" active={active === 'videos'} />
-    </div>
-
-    <div style={{ marginTop: 'auto', borderTop: '1px solid var(--hair)', paddingTop: 14 }}>
-      <div className="row center" style={{ gap: 10 }}>
-        <div style={{
-          width: 32, height: 32,
-          background: 'radial-gradient(circle at 35% 30%, #e6c9a8, #6b4628)',
-          borderRadius: '50%',
-          display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
-          color: 'rgba(255,255,255,0.85)', fontFamily: 'var(--mono)', fontSize: 9, paddingBottom: 4,
-        }}>PR</div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 13, fontWeight: 500 }}>Priya R.</div>
-          <div className="num" style={{ fontSize: 10, color: 'var(--mute)' }}>ID · 8842·G</div>
-        </div>
-      </div>
-    </div>
-  </div>
-);
+const NavRail = ({ active = 'before-after' }: any) => <SharedNavRail active={active} />;
 
 const Topbar = ({ title, subtitle, right }: any) => (
   <div className="topbar">
@@ -204,49 +168,25 @@ const AnimatedMeter = ({ pct, gold }: any) => {
   return <div className={`meter${gold ? ' gold' : ''}`}><i style={{ width: `${w}%` }} /></div>;
 };
 
-const MobileShell = ({ active = 'progress', children }: any) => (
-  <div className="frame" style={{ display: 'flex', flexDirection: 'column' }}>
-    <div className="statusbar">
-      <span>9:41</span>
-      <span style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-        <span style={{ display: 'inline-block', width: 4, height: 4, background: 'currentColor', borderRadius: '50%' }} />
-        <span style={{ display: 'inline-block', width: 4, height: 4, background: 'currentColor', borderRadius: '50%' }} />
-        <span style={{ display: 'inline-block', width: 4, height: 4, background: 'currentColor', borderRadius: '50%' }} />
-        <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><rect x="0.5" y="0.5" width="13" height="10" rx="2" stroke="currentColor" /><rect x="2" y="2" width="9" height="7" fill="currentColor" /><rect x="14" y="3.5" width="1.5" height="4" rx="0.5" fill="currentColor" /></svg>
-      </span>
+const MobileShell = ({ active = 'progress', children }: any) => {
+  return (
+    <div className="frame" style={{ display: 'flex', flexDirection: 'column' }}>
+      <div className="statusbar">
+        <span>9:41</span>
+        <span style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+          <span style={{ display: 'inline-block', width: 4, height: 4, background: 'currentColor', borderRadius: '50%' }} />
+          <span style={{ display: 'inline-block', width: 4, height: 4, background: 'currentColor', borderRadius: '50%' }} />
+          <span style={{ display: 'inline-block', width: 4, height: 4, background: 'currentColor', borderRadius: '50%' }} />
+          <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><rect x="0.5" y="0.5" width="13" height="10" rx="2" stroke="currentColor" /><rect x="2" y="2" width="9" height="7" fill="currentColor" /><rect x="14" y="3.5" width="1.5" height="4" rx="0.5" fill="currentColor" /></svg>
+        </span>
+      </div>
+      <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
+        {children}
+      </div>
+      <MobileTabBar active={active} />
     </div>
-    <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
-      {children}
-    </div>
-    <div className="tabbar">
-      <div className={`tab${active === 'home' ? ' active' : ''}`}>
-        <IconHome size={20} stroke={1.4} />
-        <span>Home</span>
-        <span className="dot" />
-      </div>
-      <div className={`tab${active === 'appt' ? ' active' : ''}`}>
-        <IconAppt size={20} stroke={1.4} />
-        <span>Visits</span>
-        <span className="dot" />
-      </div>
-      <div className={`tab${active === 'progress' ? ' active' : ''}`}>
-        <IconProgress size={20} stroke={1.4} />
-        <span>Progress</span>
-        <span className="dot" />
-      </div>
-      <div className={`tab${active === 'rewards' ? ' active' : ''}`}>
-        <IconRewards size={20} stroke={1.4} />
-        <span>Rewards</span>
-        <span className="dot" />
-      </div>
-      <div className={`tab${active === 'ai' ? ' active' : ''}`}>
-        <IconChat size={20} stroke={1.4} />
-        <span>Dr. AI</span>
-        <span className="dot" />
-      </div>
-    </div>
-  </div>
-);
+  );
+};
 
 /* Slider Component */
 const Slider = ({ height = 460 }: any) => {
@@ -308,10 +248,10 @@ const Slider = ({ height = 460 }: any) => {
       </div>
 
       <div style={{ position: 'absolute', top: 14, left: 14 }}>
-        <div className="tag solid">After · Week 9</div>
+        <div className="tag solid">After · May 13</div>
       </div>
       <div style={{ position: 'absolute', top: 14, right: 14 }}>
-        <div className="tag" style={{ background: 'var(--paper)' }}>Before · Week 1</div>
+        <div className="tag" style={{ background: 'var(--paper)' }}>Before · Mar 14</div>
       </div>
 
       <div style={{
@@ -362,9 +302,9 @@ const BeforeAfterDesktop = () => {
           <div style={{ padding: 'var(--pad-4)', borderRight: '1px solid var(--hair)', display: 'flex', flexDirection: 'column' }}>
             <div className="row between" style={{ alignItems: 'flex-end' }}>
               <div>
-                <div className="eyebrow gold dot">Week 1 → Week 9 · 56 days</div>
+                <div className="eyebrow gold dot">Mar 14 → May 13 · 56 days</div>
                 <div className="display" style={{ fontSize: 32, marginTop: 8 }}>
-                  Pigmentation reduced by <em>34%</em>.
+                  Skin progress · Phase 2
                 </div>
               </div>
               <div className="row" style={{ gap: 6 }}>
@@ -399,51 +339,15 @@ const BeforeAfterDesktop = () => {
                       }} />
                     )}
                   </div>
-                  <div className="num" style={{ fontSize: 11, marginTop: 6, fontWeight: 500 }}>{s.wk}</div>
-                  <div className="muted" style={{ fontSize: 10 }}>{s.date}</div>
+                  <div className="num" style={{ fontSize: 11, marginTop: 6, fontWeight: 500 }}>{s.date}</div>
                 </div>
               ))}
             </div>
           </div>
 
           <div style={{ overflow: 'auto', display: 'flex', flexDirection: 'column' }}>
-            <div style={{ padding: 'var(--pad-4)' }}>
-              <div className="eyebrow">Skin metrics · clinic capture</div>
-              <div className="col" style={{ marginTop: 16, gap: 18 }}>
-                {[
-                  { label: 'Pigmentation', from: 100, to: 66, unit: 'index' },
-                  { label: 'Even tone', from: 62, to: 84, unit: '%', positive: true },
-                  { label: 'Texture', from: 100, to: 76, unit: 'index' },
-                  { label: 'Pore index', from: 100, to: 82, unit: 'index' },
-                  { label: 'Hydration', from: 48, to: 71, unit: '%', positive: true },
-                ].map((m, i) => {
-                  const change = m.positive ? m.to - m.from : m.from - m.to;
-                  const sign = change > 0 ? '+' : '';
-                  return (
-                    <div key={i}>
-                      <div className="row between center">
-                        <div style={{ fontSize: 13, fontWeight: 500 }}>{m.label}</div>
-                        <div className="row center" style={{ gap: 6 }}>
-                          <div className="num muted" style={{ fontSize: 11 }}>{m.from} →</div>
-                          <div className="num" style={{ fontSize: 14, fontWeight: 500 }}>{m.to}</div>
-                          <div className="num" style={{ fontSize: 11, color: 'var(--gold)' }}>
-                            {sign}{Math.abs(change)}{m.unit === '%' ? 'pp' : ''}
-                          </div>
-                        </div>
-                      </div>
-                      <div style={{ marginTop: 6, position: 'relative', height: 22 }}>
-                        <div style={{ position: 'absolute', top: 10, left: 0, right: 0, height: 1, background: 'var(--hair)' }} />
-                        <div style={{ position: 'absolute', top: 6, left: `${m.from - 30}%`, width: 9, height: 9, border: '1px solid var(--hair-strong)', background: 'var(--paper-2)' }} />
-                        <div style={{ position: 'absolute', top: 6, left: `${m.to - 30}%`, width: 9, height: 9, background: 'var(--gold)', transition: 'left 1s ease', transform: 'rotate(45deg)' }} />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
             <div style={{ background: 'var(--paper-2)', padding: 'var(--pad-4)', flex: 1 }}>
-              <div className="eyebrow gold dot">Clinician note · Dr. A. Mehra</div>
+              <div className="eyebrow gold dot">Clinician note · Dr. A. Sharma</div>
               <div style={{ fontFamily: 'var(--serif)', fontSize: 19, lineHeight: 1.35, marginTop: 12, letterSpacing: '-0.005em' }}>
                 "Pigment regression is well within projected range. Recommend tapering retinoid frequency and introducing tranexamic acid topical from Week 10."
               </div>
@@ -456,8 +360,8 @@ const BeforeAfterDesktop = () => {
               <div className="eyebrow">Next milestone</div>
               <div style={{ marginTop: 10 }}>
                 <div className="row between center">
-                  <div className="num" style={{ fontSize: 22 }}>W12 review</div>
-                  <div className="num muted" style={{ fontSize: 12 }}>Jun 18</div>
+                  <div className="num" style={{ fontSize: 22 }}>Jun 18 review</div>
+                  <div className="num muted" style={{ fontSize: 12 }}>3 weeks away</div>
                 </div>
                 <div style={{ marginTop: 8 }}><AnimatedMeter pct={75} gold /></div>
                 <div className="muted" style={{ fontSize: 11, marginTop: 6 }}>3 weeks remaining · 1 photo log due</div>
@@ -473,9 +377,9 @@ const BeforeAfterDesktop = () => {
 const BeforeAfterMobile = () => (
   <MobileShell active="progress">
     <div style={{ padding: '14px 20px 100px', height: '100%', overflow: 'auto' }}>
-      <div className="eyebrow gold dot">Week 1 → Week 9</div>
+      <div className="eyebrow gold dot">Mar 14 → May 13 · 56 days</div>
       <div className="display" style={{ fontSize: 28, marginTop: 6 }}>
-        Pigment <em>−34%</em>
+        Skin progress
       </div>
 
       <div style={{ marginTop: 16, border: '1px solid var(--hair-2)' }}>
@@ -493,32 +397,13 @@ const BeforeAfterMobile = () => (
               background: `radial-gradient(70% 60% at 40% 30%, hsl(28 ${50 - i * 3}% ${60 + i * 4}%) 0%, hsl(24 ${40 - i * 3}% ${30 + i * 2}%) 100%)`,
               border: i === 3 ? '1px solid var(--gold)' : '1px solid var(--hair-2)',
             }} />
-            <div className="num" style={{ fontSize: 10, marginTop: 4 }}>{s.wk}</div>
+            <div className="num" style={{ fontSize: 10, marginTop: 4 }}>{s.date}</div>
           </div>
         ))}
       </div>
 
-      <div className="panel" style={{ marginTop: 20, padding: 14 }}>
-        <div className="eyebrow">Skin metrics</div>
-        <div className="col" style={{ marginTop: 12, gap: 12 }}>
-          {[
-            ['Pigment', '100 → 66', '−34', 'pp'],
-            ['Even tone', '62 → 84', '+22', 'pp'],
-            ['Texture', '100 → 76', '−24', 'idx'],
-          ].map(([l, v, c, u], i) => (
-            <div key={i}>
-              <div className="row between center">
-                <div style={{ fontSize: 12, fontWeight: 500 }}>{l}</div>
-                <div className="num" style={{ fontSize: 12, color: 'var(--gold)' }}>{c}{u}</div>
-              </div>
-              <div className="num muted" style={{ fontSize: 11 }}>{v}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
       <div className="panel" style={{ marginTop: 14, padding: 14, background: 'var(--paper-2)' }}>
-        <div className="eyebrow gold dot">Dr. A. Mehra · note</div>
+        <div className="eyebrow gold dot">Dr. A. Sharma · note</div>
         <div style={{ fontFamily: 'var(--serif)', fontSize: 15, lineHeight: 1.4, marginTop: 8 }}>
           "Pigment regression well within projected range. Tapering retinoids week 10."
         </div>
@@ -528,21 +413,10 @@ const BeforeAfterMobile = () => (
 );
 
 export default function BeforeAfterPage() {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1024);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  if (isMobile) {
-    return <BeforeAfterMobile />;
-  }
-
-  return <BeforeAfterDesktop />;
+  return (
+    <>
+      <div className="desktop-only"><BeforeAfterDesktop /></div>
+      <div className="mobile-only"><BeforeAfterMobile /></div>
+    </>
+  );
 }

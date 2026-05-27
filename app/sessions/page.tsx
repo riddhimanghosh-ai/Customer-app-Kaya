@@ -1,7 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import SharedNavRail from '../components/NavRail';
+import MobileTabBar from '../components/MobileTabBar';
+import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 /* Icons */
 const Icon = ({ size = 18, children, stroke = 1.4, style }: any) => (
@@ -141,6 +144,236 @@ const IconCheck = (p: any) => (
   </Icon>
 );
 
+const IconSummary = (p: any) => (
+  <Icon {...p}><path d="M5 4 H15 L19 8 V20 H5 Z" /><path d="M8 10 H16 M8 13 H16 M8 16 H12" /><GoldNode cx={15} cy={8} /></Icon>
+);
+
+/* Booking data */
+const TREATMENTS = [
+  { id: 'consultation', name: 'Initial Consultation', duration: '30 min', price: '₹600', desc: 'Full skin analysis + treatment plan' },
+  { id: 'hydrafacial', name: 'HydraFacial', duration: '60 min', price: '₹3,200', desc: 'Deep cleanse, exfoliation & hydration infusion' },
+  { id: 'chemical-peel', name: 'Chemical Peel', duration: '45 min', price: '₹2,800', desc: 'TCA peel for hyperpigmentation & acne scarring' },
+  { id: 'laser', name: 'Laser Treatment', duration: '45 min', price: '₹4,500', desc: 'Targeted laser for pigment & texture correction' },
+  { id: 'acne', name: 'Acne Treatment', duration: '30 min', price: '₹1,800', desc: 'Medical-grade acne clearing & prevention' },
+];
+
+const DOCTORS = [
+  { id: 'ananya', name: 'Dr. Ananya Sharma', spec: 'Cosmetic dermatology', initials: 'AS', rating: 4.9 },
+  { id: 'ravi', name: 'Dr. Ravi Krishnan', spec: 'Medical dermatology', initials: 'RK', rating: 4.8 },
+];
+
+const BOOKING_DATES = [
+  { day: 'Thu', dt: 29, mon: 'May', full: '2026-05-29' },
+  { day: 'Fri', dt: 30, mon: 'May', full: '2026-05-30' },
+  { day: 'Sat', dt: 31, mon: 'May', full: '2026-05-31' },
+  { day: 'Mon', dt: 2,  mon: 'Jun', full: '2026-06-02' },
+  { day: 'Tue', dt: 3,  mon: 'Jun', full: '2026-06-03' },
+  { day: 'Wed', dt: 4,  mon: 'Jun', full: '2026-06-04' },
+  { day: 'Thu', dt: 5,  mon: 'Jun', full: '2026-06-05' },
+];
+
+const TIMES = ['09:00', '10:00', '11:00', '11:30', '14:00', '15:00', '16:00', '17:00'];
+
+const BookingModal = ({ onClose }: { onClose: () => void }) => {
+  const [user] = useState<any>(() => {
+    if (typeof window === 'undefined') return null;
+    try { return JSON.parse(localStorage.getItem('user') || 'null'); } catch { return null; }
+  });
+
+  const [step, setStep] = useState(1);
+  const [treatment, setTreatment] = useState<any>(null);
+  const [doctor, setDoctor] = useState<any>(null);
+  const [date, setDate] = useState<any>(null);
+  const [time, setTime] = useState('');
+  const [name, setName] = useState(user?.name || '');
+  const [phone, setPhone] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [ref, setRef] = useState('');
+
+  const canNext = () => {
+    if (step === 1) return !!treatment;
+    if (step === 2) return !!(doctor && date && time);
+    if (step === 3) return !!(name.trim() && (user || phone.length >= 10));
+    return false;
+  };
+
+  const submit = async () => {
+    setLoading(true);
+    try {
+      if (user) {
+        await fetch('/api/sessions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ doctor_name: doctor.name, session_date: date.full, session_time: time, treatment_type: treatment.name, status: 'upcoming' }),
+        });
+        setRef('KYB-' + Math.random().toString(36).slice(2, 8).toUpperCase());
+      } else {
+        const res = await fetch('/api/sessions/guest', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, phone, doctor_name: doctor.name, session_date: date.full, session_time: time, treatment_type: treatment.name }),
+        });
+        const data = await res.json();
+        setRef(data.reference || 'KYB-' + Math.random().toString(36).slice(2, 8).toUpperCase());
+      }
+    } catch {
+      setRef('KYB-' + Math.random().toString(36).slice(2, 8).toUpperCase());
+    }
+    setLoading(false);
+    setStep(4);
+  };
+
+  return (
+    <div
+      style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
+      onClick={e => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div style={{ background: 'var(--paper)', width: '100%', maxWidth: 480, maxHeight: '90vh', overflow: 'auto', borderRadius: 'var(--r-4)', boxShadow: '0 24px 60px rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column' }}>
+
+        {/* Header */}
+        <div style={{ padding: '20px 24px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div>
+            <div className="eyebrow brand dot">Book a session</div>
+            {step < 4 && <div style={{ fontSize: 11, color: 'var(--mute)', marginTop: 2 }}>Step {step} of 3</div>}
+          </div>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--mute)', fontSize: 22, lineHeight: 1, padding: '0 4px', marginTop: -2 }}>×</button>
+        </div>
+
+        {/* Step bar */}
+        {step < 4 && (
+          <div style={{ display: 'flex', gap: 4, padding: '12px 24px 0' }}>
+            {[1, 2, 3].map(s => (
+              <div key={s} style={{ height: 3, flex: 1, background: s <= step ? 'var(--brand)' : 'var(--hair-2)', borderRadius: 2, transition: 'background 0.2s' }} />
+            ))}
+          </div>
+        )}
+
+        {/* Body */}
+        <div style={{ padding: '20px 24px', flex: 1 }}>
+
+          {step === 1 && (
+            <div>
+              <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 14 }}>What would you like to book?</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {TREATMENTS.map(t => (
+                  <div key={t.id} onClick={() => setTreatment(t)} style={{ padding: '14px 16px', border: `1.5px solid ${treatment?.id === t.id ? 'var(--brand)' : 'var(--hair)'}`, borderRadius: 'var(--r-3)', cursor: 'pointer', background: treatment?.id === t.id ? 'var(--brand-tint-2)' : 'var(--paper)', transition: 'all 0.15s' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <div style={{ fontSize: 13, fontWeight: 600 }}>{t.name}</div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--brand)' }}>{t.price}</div>
+                    </div>
+                    <div style={{ fontSize: 11, color: 'var(--mute)', marginTop: 3 }}>{t.desc} · {t.duration}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {step === 2 && (
+            <div>
+              <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 16 }}>Choose doctor & time</div>
+
+              <div className="eyebrow" style={{ marginBottom: 8 }}>Doctor</div>
+              <div style={{ display: 'flex', gap: 8, marginBottom: 18 }}>
+                {DOCTORS.map(d => (
+                  <div key={d.id} onClick={() => setDoctor(d)} style={{ flex: 1, padding: '12px 14px', border: `1.5px solid ${doctor?.id === d.id ? 'var(--brand)' : 'var(--hair)'}`, borderRadius: 'var(--r-3)', cursor: 'pointer', background: doctor?.id === d.id ? 'var(--brand-tint-2)' : 'var(--paper)', transition: 'all 0.15s' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div style={{ fontSize: 12, fontWeight: 600 }}>{d.name}</div>
+                      <div style={{ fontSize: 11, color: 'var(--gold)' }}>★ {d.rating}</div>
+                    </div>
+                    <div style={{ fontSize: 11, color: 'var(--mute)', marginTop: 2 }}>{d.spec}</div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="eyebrow" style={{ marginBottom: 8 }}>Date</div>
+              <div style={{ display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 4, marginBottom: 18 }}>
+                {BOOKING_DATES.map((d, i) => (
+                  <div key={i} onClick={() => setDate(d)} style={{ flexShrink: 0, width: 52, padding: '10px 6px', textAlign: 'center', border: `1.5px solid ${date?.full === d.full ? 'var(--brand)' : 'var(--hair)'}`, borderRadius: 'var(--r-3)', cursor: 'pointer', background: date?.full === d.full ? 'var(--brand)' : 'var(--paper)', color: date?.full === d.full ? 'white' : 'var(--ink)', transition: 'all 0.15s' }}>
+                    <div style={{ fontSize: 10, opacity: date?.full === d.full ? 0.8 : 0.55 }}>{d.day}</div>
+                    <div style={{ fontSize: 18, fontWeight: 600, fontFamily: 'var(--mono)', lineHeight: 1.2 }}>{d.dt}</div>
+                    <div style={{ fontSize: 10, opacity: date?.full === d.full ? 0.8 : 0.55 }}>{d.mon}</div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="eyebrow" style={{ marginBottom: 8 }}>Time</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                {TIMES.map(t => (
+                  <div key={t} onClick={() => setTime(t)} style={{ padding: '7px 14px', border: `1.5px solid ${time === t ? 'var(--brand)' : 'var(--hair)'}`, borderRadius: 'var(--r-2)', cursor: 'pointer', background: time === t ? 'var(--brand)' : 'var(--paper)', color: time === t ? 'white' : 'var(--ink)', fontSize: 12, fontFamily: 'var(--mono)', transition: 'all 0.15s' }}>{t}</div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {step === 3 && (
+            <div>
+              <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 14 }}>{user ? 'Confirm your booking' : 'Your details'}</div>
+              <div style={{ background: 'var(--paper-2)', borderRadius: 'var(--r-3)', padding: '12px 14px', marginBottom: 18 }}>
+                <div style={{ fontSize: 13, fontWeight: 600 }}>{treatment?.name}</div>
+                <div style={{ fontSize: 11, color: 'var(--mute)', marginTop: 3 }}>{doctor?.name} · {date?.day} {date?.dt} {date?.mon} · {time}</div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--brand)', marginTop: 4 }}>{treatment?.price}</div>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                <div className="field">
+                  <label>Name</label>
+                  <input value={name} onChange={e => setName(e.target.value)} placeholder="Your full name" readOnly={!!user} style={{ opacity: user ? 0.7 : 1 }} />
+                </div>
+                {!user ? (
+                  <div className="field">
+                    <label>Phone</label>
+                    <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="+91 XXXXX XXXXX" type="tel" />
+                    <div className="hint">· We'll send a confirmation SMS</div>
+                  </div>
+                ) : (
+                  <div style={{ fontSize: 12, color: 'var(--mute)', background: 'rgba(74,184,126,0.08)', padding: '8px 12px', borderRadius: 'var(--r-2)' }}>
+                    ✓ Signed in as {user.email}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {step === 4 && (
+            <div style={{ textAlign: 'center', padding: '28px 0 8px' }}>
+              <div style={{ width: 56, height: 56, background: 'var(--brand)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                <IconCheck size={24} style={{ color: 'white' }} />
+              </div>
+              <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 6 }}>Booking confirmed!</div>
+              <div style={{ fontSize: 12, color: 'var(--mute)', lineHeight: 1.7 }}>
+                {treatment?.name}<br />
+                {doctor?.name}<br />
+                <span style={{ color: 'var(--ink)', fontWeight: 500 }}>{date?.day} {date?.dt} {date?.mon} · {time}</span>
+              </div>
+              <div className="num" style={{ fontSize: 11, color: 'var(--mute)', marginTop: 10 }}>Ref · {ref}</div>
+              {!user && (
+                <div style={{ marginTop: 12, fontSize: 12, color: 'var(--mute)' }}>
+                  Confirmation sent to {phone}.<br />
+                  <a href="/register" style={{ color: 'var(--brand)', fontWeight: 500 }}>Create an account</a> to manage your bookings.
+                </div>
+              )}
+              <button className="btn" style={{ marginTop: 22 }} onClick={onClose}>Done</button>
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        {step < 4 && (
+          <div style={{ padding: '16px 24px', borderTop: '1px solid var(--hair)', display: 'flex', justifyContent: 'space-between' }}>
+            {step > 1
+              ? <button className="btn ghost sm" onClick={() => setStep(s => s - 1)}>← Back</button>
+              : <div />
+            }
+            {step < 3
+              ? <button className="btn sm" disabled={!canNext()} style={{ opacity: canNext() ? 1 : 0.4 }} onClick={() => setStep(s => s + 1)}>Continue →</button>
+              : <button className="btn sm" disabled={!canNext() || loading} style={{ opacity: canNext() && !loading ? 1 : 0.4 }} onClick={submit}>{loading ? 'Booking…' : 'Confirm booking →'}</button>
+            }
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 /* Shared Components */
 const Brand = ({ tag = "Skin · Hair · Body" }: any) => (
   <div>
@@ -161,50 +394,7 @@ const NavItem = ({ icon: I, label, active, badge, href }: any) => (
   </Link>
 );
 
-const NavRail = ({ active = 'appointments' }: any) => (
-  <div className="nav-rail">
-    <div>
-      <Brand />
-    </div>
-
-    <div style={{ marginTop: 22 }}>
-      <div className="group-label">Care</div>
-      <NavItem icon={IconHome} label="Overview" href="/" active={active === 'dashboard'} />
-      <NavItem icon={IconAppt} label="Appointments" href="/sessions" badge="2" active={active === 'appointments'} />
-      <NavItem icon={IconMed} label="Medications" href="/prescriptions" badge="4" active={active === 'prescriptions'} />
-      <NavItem icon={IconProgress} label="Progress" href="/before-after" active={active === 'before-after'} />
-      <NavItem icon={IconChat} label="Dr. AI" href="/chat" active={active === 'chatbot'} />
-    </div>
-
-    <div style={{ marginTop: 8 }}>
-      <div className="group-label">Membership</div>
-      <NavItem icon={IconRewards} label="Loyalty" href="/loyalty" active={active === 'loyalty'} />
-      <NavItem icon={IconRefer} label="Referrals" href="/referral" active={active === 'referral'} />
-    </div>
-
-    <div style={{ marginTop: 8 }}>
-      <div className="group-label">Learn</div>
-      <NavItem icon={IconBlog} label="Articles" href="/blog" active={active === 'blog'} />
-      <NavItem icon={IconVideo} label="Videos" href="/videos" active={active === 'videos'} />
-    </div>
-
-    <div style={{ marginTop: 'auto', borderTop: '1px solid var(--hair)', paddingTop: 14 }}>
-      <div className="row center" style={{ gap: 10 }}>
-        <div style={{
-          width: 32, height: 32,
-          background: 'radial-gradient(circle at 35% 30%, #e6c9a8, #6b4628)',
-          borderRadius: '50%',
-          display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
-          color: 'rgba(255,255,255,0.85)', fontFamily: 'var(--mono)', fontSize: 9, paddingBottom: 4,
-        }}>PR</div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 13, fontWeight: 500 }}>Priya R.</div>
-          <div className="num" style={{ fontSize: 10, color: 'var(--mute)' }}>ID · 8842·G</div>
-        </div>
-      </div>
-    </div>
-  </div>
-);
+const NavRail = ({ active = 'appointments' }: any) => <SharedNavRail active={active} />;
 
 const Topbar = ({ title, subtitle, right }: any) => (
   <div className="topbar">
@@ -261,75 +451,40 @@ const DoctorCard = ({ name, spec, since, sessions, initials, rating = 4.9, mini 
   </div>
 );
 
-const MobileShell = ({ active = 'appt', children }: any) => (
-  <div className="frame" style={{ display: 'flex', flexDirection: 'column' }}>
-    <div className="statusbar">
-      <span>9:41</span>
-      <span style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-        <span style={{ display: 'inline-block', width: 4, height: 4, background: 'currentColor', borderRadius: '50%' }} />
-        <span style={{ display: 'inline-block', width: 4, height: 4, background: 'currentColor', borderRadius: '50%' }} />
-        <span style={{ display: 'inline-block', width: 4, height: 4, background: 'currentColor', borderRadius: '50%' }} />
-        <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><rect x="0.5" y="0.5" width="13" height="10" rx="2" stroke="currentColor" /><rect x="2" y="2" width="9" height="7" fill="currentColor" /><rect x="14" y="3.5" width="1.5" height="4" rx="0.5" fill="currentColor" /></svg>
-      </span>
+const MobileShell = ({ active = 'appt', children }: any) => {
+  return (
+    <div className={`frame`} style={{ display: 'flex', flexDirection: 'column' }}>
+      <div className="statusbar">
+        <span>9:41</span>
+        <span style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+          <span style={{ display: 'inline-block', width: 4, height: 4, background: 'currentColor', borderRadius: '50%' }} />
+          <span style={{ display: 'inline-block', width: 4, height: 4, background: 'currentColor', borderRadius: '50%' }} />
+          <span style={{ display: 'inline-block', width: 4, height: 4, background: 'currentColor', borderRadius: '50%' }} />
+          <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><rect x="0.5" y="0.5" width="13" height="10" rx="2" stroke="currentColor" /><rect x="2" y="2" width="9" height="7" fill="currentColor" /><rect x="14" y="3.5" width="1.5" height="4" rx="0.5" fill="currentColor" /></svg>
+        </span>
+      </div>
+      <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>{children}</div>
+      <MobileTabBar active={active} />
     </div>
-    <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
-      {children}
-    </div>
-    <div className="tabbar">
-      <Link href="/">
-        <div className={`tab${active === 'home' ? ' active' : ''}`}>
-          <IconHome size={20} stroke={1.4} />
-          <span>Home</span>
-          <span className="dot" />
-        </div>
-      </Link>
-      <Link href="/sessions">
-        <div className={`tab${active === 'appt' ? ' active' : ''}`}>
-          <IconAppt size={20} stroke={1.4} />
-          <span>Visits</span>
-          <span className="dot" />
-        </div>
-      </Link>
-      <Link href="/before-after">
-        <div className={`tab${active === 'progress' ? ' active' : ''}`}>
-          <IconProgress size={20} stroke={1.4} />
-          <span>Progress</span>
-          <span className="dot" />
-        </div>
-      </Link>
-      <Link href="/loyalty">
-        <div className={`tab${active === 'rewards' ? ' active' : ''}`}>
-          <IconRewards size={20} stroke={1.4} />
-          <span>Rewards</span>
-          <span className="dot" />
-        </div>
-      </Link>
-      <Link href="/chat">
-        <div className={`tab${active === 'ai' ? ' active' : ''}`}>
-          <IconChat size={20} stroke={1.4} />
-          <span>Dr. AI</span>
-          <span className="dot" />
-        </div>
-      </Link>
-    </div>
-  </div>
-);
+  );
+};
 
 const APPOINTMENTS = [
-  { d: 'Sat', dt: '31', mon: 'May', time: '11:30', doc: 'Dr. Anika Mehra', spec: 'Dermatology · Cosmetic', treat: 'Hydrafacial · Phase 2', loc: 'Bandra West · Suite 04', tag: 'upcoming', confirm: true, in: 'in 4 days' },
+  { d: 'Sat', dt: '31', mon: 'May', time: '11:30', doc: 'Dr. Ananya Sharma', spec: 'Dermatology · Cosmetic', treat: 'Hydrafacial · Phase 2', loc: 'Bandra West · Suite 04', tag: 'upcoming', confirm: true, in: 'in 4 days' },
   { d: 'Thu', dt: '12', mon: 'Jun', time: '15:00', doc: 'Dr. Ravi Krishnan', spec: 'Dermatology · Medical', treat: 'Acne consultation', loc: 'Bandra West · Suite 02', tag: 'pending', in: 'in 16 days' },
-  { d: 'Tue', dt: '24', mon: 'Jun', time: '10:00', doc: 'Dr. Anika Mehra', spec: 'Dermatology · Cosmetic', treat: 'Phase 3 review', loc: 'Bandra West · Suite 04', tag: 'upcoming', in: 'in 28 days' },
+  { d: 'Tue', dt: '24', mon: 'Jun', time: '10:00', doc: 'Dr. Ananya Sharma', spec: 'Dermatology · Cosmetic', treat: 'Phase 3 review', loc: 'Bandra West · Suite 04', tag: 'upcoming', in: 'in 28 days' },
 ];
 
 const PAST = [
-  { d: 'Tue', dt: '13', mon: 'May', doc: 'Dr. Anika Mehra', treat: 'Hydrafacial · Phase 2', notes: 'Mild erythema · resolved 24h' },
-  { d: 'Wed', dt: '30', mon: 'Apr', doc: 'Dr. Anika Mehra', treat: 'Chemical peel · TCA 15%', notes: 'Tolerated well · -12% pigment' },
-  { d: 'Fri', dt: '11', mon: 'Apr', doc: 'Dr. Anika Mehra', treat: 'Chemical peel · TCA 10%', notes: 'Baseline reading taken' },
+  { d: 'Tue', dt: '13', mon: 'May', doc: 'Dr. Ananya Sharma', treat: 'Hydrafacial · Phase 2', notes: 'Mild erythema · resolved 24h' },
+  { d: 'Wed', dt: '30', mon: 'Apr', doc: 'Dr. Ananya Sharma', treat: 'Chemical peel · TCA 15%', notes: 'Tolerated well · -12% pigment' },
+  { d: 'Fri', dt: '11', mon: 'Apr', doc: 'Dr. Ananya Sharma', treat: 'Chemical peel · TCA 10%', notes: 'Baseline reading taken' },
   { d: 'Thu', dt: '14', mon: 'Mar', doc: 'Dr. Ravi Krishnan', treat: 'Initial consultation', notes: 'Plan: 12-week protocol' },
 ];
 
 const AppointmentsDesktop = () => {
   const [filter, setFilter] = useState('upcoming');
+  const [showBooking, setShowBooking] = useState(false);
 
   return (
     <div className="frame" style={{ display: 'flex' }}>
@@ -338,13 +493,13 @@ const AppointmentsDesktop = () => {
         <Topbar
           subtitle="Appointments"
           title="Sessions & consultations"
-          right={<button className="btn"><IconPlus size={14} /> Book a visit</button>}
+          right={<button className="btn" onClick={() => setShowBooking(true)}><IconPlus size={14} /> Book a visit</button>}
         />
 
         <div className="row" style={{ padding: '14px var(--pad-4)', borderBottom: '1px solid var(--hair)', gap: 4, alignItems: 'center' }}>
           {[['upcoming', 'Upcoming', 3], ['pending', 'Pending', 1], ['past', 'Past', 12], ['cancelled', 'Cancelled', 2]].map(([k, l, c]) => (
             <button key={k}
-              onClick={() => setFilter(k)}
+              onClick={() => setFilter(k as string)}
               style={{
                 appearance: 'none',
                 background: filter === k ? 'var(--ink)' : 'transparent',
@@ -436,7 +591,7 @@ const AppointmentsDesktop = () => {
             </div>
 
             <div className="col" style={{ marginTop: 22, gap: 14 }}>
-              <DoctorCard name="Dr. Anika Mehra" spec="Cosmetic dermatology" since="14y" sessions="2,400+" initials="AM" rating={4.9} />
+              <DoctorCard name="Dr. Ananya Sharma" spec="Cosmetic dermatology" since="14y" sessions="2,400+" initials="AS" rating={4.9} />
               <DoctorCard name="Dr. Ravi Krishnan" spec="Medical dermatology" since="22y" sessions="6,800+" initials="RK" rating={4.8} />
             </div>
 
@@ -464,7 +619,7 @@ const AppointmentsDesktop = () => {
                       color: 'var(--paper)',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                     }}>{done && <IconCheck size={8} />}</div>
-                    <span style={{ color: done ? 'var(--mute)' : 'var(--ink)', textDecoration: done ? 'line-through' : 'none' }}>{t}</span>
+                    <span style={{ color: done ? 'var(--mute)' : 'var(--ink)' }}>{t}</span>
                   </div>
                 ))}
               </div>
@@ -472,14 +627,21 @@ const AppointmentsDesktop = () => {
           </div>
         </div>
       </div>
+    {showBooking && <BookingModal onClose={() => setShowBooking(false)} />}
     </div>
   );
 };
 
-const AppointmentsMobile = () => (
+const AppointmentsMobile = () => {
+  const [showBooking, setShowBooking] = useState(false);
+  return (
   <MobileShell active="appt">
+    {showBooking && <BookingModal onClose={() => setShowBooking(false)} />}
     <div style={{ padding: '12px 20px 100px', height: '100%', overflow: 'auto' }}>
-      <div className="display" style={{ fontSize: 28 }}>Your <em>visits</em></div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className="display" style={{ fontSize: 28 }}>Your <em>visits</em></div>
+        <button className="btn sm" onClick={() => setShowBooking(true)}><IconPlus size={13} /> Book</button>
+      </div>
 
       <div className="row" style={{ marginTop: 14, gap: 6 }}>
         {['Upcoming', 'Past', 'Cancelled'].map((t, i) => (
@@ -525,30 +687,20 @@ const AppointmentsMobile = () => (
       <div style={{ marginTop: 22 }}>
         <div className="eyebrow">Care team</div>
         <div className="col" style={{ marginTop: 10, gap: 8 }}>
-          <DoctorCard name="Dr. Anika Mehra" spec="Cosmetic dermatology" initials="AM" rating={4.9} mini />
+          <DoctorCard name="Dr. Ananya Sharma" spec="Cosmetic dermatology" initials="AS" rating={4.9} mini />
           <DoctorCard name="Dr. Ravi Krishnan" spec="Medical dermatology" initials="RK" rating={4.8} mini />
         </div>
       </div>
     </div>
   </MobileShell>
-);
+  );
+};
 
 export default function AppointmentsPage() {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1024);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  if (isMobile) {
-    return <AppointmentsMobile />;
-  }
-
-  return <AppointmentsDesktop />;
+  return (
+    <>
+      <div className="desktop-only"><AppointmentsDesktop /></div>
+      <div className="mobile-only"><AppointmentsMobile /></div>
+    </>
+  );
 }

@@ -1,10 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import SharedNavRail from '../components/NavRail';
+import MobileTabBar from '../components/MobileTabBar';
 
-const Icon = ({ children, size = 24, className = '' }: { children: React.ReactNode; size?: number; className?: string }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+const Icon = ({ children, size = 24, className = '', style }: { children: React.ReactNode; size?: number; className?: string; style?: React.CSSProperties }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} style={style}>
     {children}
   </svg>
 );
@@ -80,17 +83,24 @@ const IconVideo = ({ size = 24 }: { size?: number }) => (
   </Icon>
 );
 
-const IconBell = ({ size = 24 }: { size?: number }) => (
-  <Icon size={size}>
+const IconBell = ({ size = 24, style }: { size?: number; style?: React.CSSProperties }) => (
+  <Icon size={size} style={style}>
     <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
     <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
   </Icon>
 );
 
-const IconSearch = ({ size = 24 }: { size?: number }) => (
-  <Icon size={size}>
+const IconSearch = ({ size = 24, style }: { size?: number; style?: React.CSSProperties }) => (
+  <Icon size={size} style={style}>
     <circle cx="11" cy="11" r="8"></circle>
     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </Icon>
+);
+
+const IconSummary = ({ size = 24 }: { size?: number }) => (
+  <Icon size={size}>
+    <path d="M5 4 H15 L19 8 V20 H5 Z"></path>
+    <path d="M8 10 H16 M8 13 H16 M8 16 H12"></path>
   </Icon>
 );
 
@@ -122,41 +132,7 @@ const NavItem = ({ icon: Icon, label, active = false, href = '#' }: { icon: Reac
   </Link>
 );
 
-const NavRail = ({ active }: { active: string }) => (
-  <div style={{
-    width: 160,
-    background: 'var(--paper)',
-    borderRight: '1px solid var(--hair)',
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100vh',
-  }}>
-    <Brand />
-    <nav style={{ display: 'flex', flexDirection: 'column', overflow: 'auto' }}>
-      <div style={{ padding: 'var(--pad-2) 0' }}>
-        {[
-          { k: 'home', icon: IconHome, label: 'Home', href: '/' },
-          { k: 'appointments', icon: IconAppt, label: 'Sessions', href: '/sessions' },
-          { k: 'progress', icon: IconProgress, label: 'Progress', href: '/before-after' },
-          { k: 'medications', icon: IconMed, label: 'Medications', href: '/prescriptions' },
-          { k: 'chat', icon: IconChat, label: 'Chat', href: '/chat' },
-        ].map((item) => (
-          <NavItem key={item.k} icon={item.icon} label={item.label} href={item.href} active={active === item.k} />
-        ))}
-      </div>
-      <div style={{ borderTop: '1px solid var(--hair)', padding: 'var(--pad-2) 0' }}>
-        {[
-          { k: 'loyalty', icon: IconRewards, label: 'Loyalty', href: '/loyalty' },
-          { k: 'referral', icon: IconRefer, label: 'Refer', href: '/referral' },
-          { k: 'blog', icon: IconBlog, label: 'Blog', href: '/blog' },
-          { k: 'video', icon: IconVideo, label: 'Videos', href: '/videos' },
-        ].map((item) => (
-          <NavItem key={item.k} icon={item.icon} label={item.label} href={item.href} active={active === item.k} />
-        ))}
-      </div>
-    </nav>
-  </div>
-);
+const NavRail = ({ active }: { active: string }) => <SharedNavRail active={active} />;
 
 const Topbar = ({ subtitle = '', title = '' }: { subtitle?: string; title?: string }) => (
   <div style={{
@@ -182,140 +158,115 @@ const Topbar = ({ subtitle = '', title = '' }: { subtitle?: string; title?: stri
   </div>
 );
 
-const MobileShell = ({ children, active = '' }: { children: React.ReactNode; active?: string }) => (
-  <div style={{ background: 'var(--ink)', color: 'var(--paper)', height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-    <div style={{ flex: 1, overflow: 'auto' }}>{children}</div>
-    <div style={{
-      display: 'grid',
-      gridTemplateColumns: 'repeat(4, 1fr)',
-      gap: 0,
-      borderTop: '1px solid rgba(255,255,255,0.12)',
-      background: 'var(--ink)',
-      padding: '8px 0',
-    }}>
-      {[
-        { k: 'home', icon: IconHome, label: 'Home', href: '/' },
-        { k: 'appointments', icon: IconAppt, label: 'Sessions', href: '/sessions' },
-        { k: 'rewards', icon: IconRewards, label: 'Loyalty', href: '/loyalty' },
-        { k: 'chat', icon: IconChat, label: 'Chat', href: '/chat' },
-      ].map((item) => (
-        <Link key={item.k} href={item.href}>
-          <div style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: '8px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 4,
-            fontSize: 10,
-            color: active === item.k ? 'var(--gold)' : 'var(--mute-2)',
-          }}>
-            <item.icon size={18} />
-            {item.label}
-          </div>
-        </Link>
-      ))}
+const MobileShell = ({ active = '', children, dark }: { children: React.ReactNode; active?: string; dark?: boolean }) => {
+  return (
+    <div className={`frame${dark ? ' dark' : ''}`} style={{ display: 'flex', flexDirection: 'column' }}>
+      <div className="statusbar">
+        <span>9:41</span>
+        <span style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+          <span style={{ display: 'inline-block', width: 4, height: 4, background: 'currentColor', borderRadius: '50%' }} />
+          <span style={{ display: 'inline-block', width: 4, height: 4, background: 'currentColor', borderRadius: '50%' }} />
+          <span style={{ display: 'inline-block', width: 4, height: 4, background: 'currentColor', borderRadius: '50%' }} />
+          <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><rect x="0.5" y="0.5" width="13" height="10" rx="2" stroke="currentColor" /><rect x="2" y="2" width="9" height="7" fill="currentColor" /><rect x="14" y="3.5" width="1.5" height="4" rx="0.5" fill="currentColor" /></svg>
+        </span>
+      </div>
+      <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>{children}</div>
+      <MobileTabBar active={active} />
     </div>
-  </div>
-);
+  );
+};
 
 const TIERS = [
-  { k: 'silver', name: 'Silver', pts: 0, perks: ['Basic appointment access', 'Standard pricing', 'Welcome consultation'] },
-  { k: 'gold', name: 'Gold', pts: 2000, perks: ['10% off treatments', 'Priority booking', 'Quarterly skin analysis', 'Free product samples'] },
-  { k: 'elite', name: 'Elite', pts: 3500, perks: ['18% off treatments', 'Dedicated dermatologist', '2 complimentary facials / yr', 'Lab panels included', 'Concierge messaging'] },
-  { k: 'platinum', name: 'Platinum', pts: 6000, perks: ['25% off treatments', 'Same-day appointments', 'Annual full-body assessment', 'Quarterly take-home kits', 'After-hours access', 'Travel skincare program'] },
+  { k: 'silver', name: 'Silver', refs: 0, youSave: '5% off treatments', friendSaves: '₹100 off their first visit', perks: ['5% off all treatments', 'Referred friend gets ₹100 off first visit', 'Standard booking'] },
+  { k: 'gold', name: 'Gold', refs: 3, youSave: '12% off treatments', friendSaves: '₹300 off their first visit', perks: ['12% off all treatments', 'Referred friend gets ₹300 off first visit', 'Priority booking', 'Quarterly skin review'] },
+  { k: 'platinum', name: 'Platinum', refs: 8, youSave: '20% off treatments', friendSaves: '₹500 off their first visit', perks: ['20% off all treatments', 'Referred friend gets ₹500 off first visit', 'Same-day appointments', 'Complimentary Kaya HydraFacial annually', 'Dedicated dermatologist line'] },
+];
+
+const MY_REFERRALS = [
+  { name: 'Aisha Kapoor', date: '28 Mar', status: 'Booked', saved: '₹300', youSaved: '₹300' },
+  { name: 'Neha Sharma', date: '15 Apr', status: 'Booked', saved: '₹300', youSaved: '₹300' },
+  { name: 'Priya Singh', date: '02 May', status: 'Signed up', saved: 'Pending', youSaved: 'Pending' },
 ];
 
 const LoyaltyDesktop = () => {
   const [hover, setHover] = useState('gold');
-  const current = TIERS.findIndex((t) => t.k === 'gold');
-  const points = 2840;
-  const nextTier = TIERS[current + 1];
-  const pctToNext = ((points - TIERS[current].pts) / (nextTier.pts - TIERS[current].pts)) * 100;
+  const myRefs = 3;
+  const currentTier = TIERS.find(t => t.refs <= myRefs && (!TIERS[TIERS.indexOf(t) + 1] || TIERS[TIERS.indexOf(t) + 1].refs > myRefs))!;
+  const nextTier = TIERS[TIERS.indexOf(currentTier) + 1];
+  const refsToNext = nextTier ? nextTier.refs - myRefs : 0;
 
   return (
     <div className="frame" style={{ display: 'flex' }}>
       <NavRail active="loyalty" />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        <Topbar subtitle="Membership" title="Skin loyalty program" />
+        <Topbar subtitle="Membership" title="Refer & save together" />
 
-        {/* Hero: current tier */}
+        {/* Hero */}
         <div className="row" style={{ padding: 'var(--pad-4)', gap: 0, borderBottom: '1px solid var(--hair)' }}>
           <div style={{ flex: 1.4, paddingRight: 32 }}>
-            <div className="eyebrow gold dot">You are · Gold</div>
+            <div className="eyebrow gold dot">You are · Gold member</div>
             <div className="display h1" style={{ marginTop: 12 }}>
-              <em>2,840</em><br />
-              skin points.
+              <em>{myRefs}</em> referrals.<br />
+              Both of you save.
             </div>
             <div className="muted" style={{ fontSize: 14, marginTop: 16, maxWidth: 440 }}>
-              Earn one point per ₹100 spent on treatments, products and consultations. Redeem against any service or save for tier upgrades.
+              Every friend you refer gets {currentTier.friendSaves} on their first Kaya visit. You get {currentTier.youSave} on all treatments. Refer more, unlock Platinum.
             </div>
             <div className="row" style={{ marginTop: 22, gap: 10 }}>
-              <button className="btn">Redeem points <span className="arrow" /></button>
-              <button className="btn ghost">Earn faster</button>
+              <button className="btn">Share referral link <span className="arrow" /></button>
+              <button className="btn ghost">Copy code · PRIYA300</button>
             </div>
           </div>
 
-          {/* Tier-to-tier progression bar */}
+          {/* Tier progression */}
           <div style={{ flex: 1.4, paddingLeft: 32, borderLeft: '1px solid var(--hair)' }}>
             <div className="row between center">
-              <div className="eyebrow">Progress to Elite</div>
-              <div className="num" style={{ fontSize: 12, color: 'var(--mute)' }}>660 pts remaining</div>
+              <div className="eyebrow">Progress to Platinum</div>
+              {nextTier && <div className="num" style={{ fontSize: 12, color: 'var(--mute)' }}>{refsToNext} more referrals</div>}
             </div>
 
-            {/* Progression rail */}
             <div style={{ position: 'relative', marginTop: 24, paddingBottom: 60 }}>
               <div style={{ height: 2, background: 'var(--hair-2)', position: 'relative' }}>
-                <div style={{
-                  height: 2, background: 'var(--gold)',
-                  width: `${(current / (TIERS.length - 1)) * 100 + (pctToNext / 100) * (100 / (TIERS.length - 1))}%`,
-                  transition: 'width 1s ease',
-                }} />
+                <div style={{ height: 2, background: 'var(--gold)', width: `${(myRefs / TIERS[TIERS.length - 1].refs) * 100}%`, transition: 'width 1s ease' }} />
               </div>
               {TIERS.map((t, i) => {
-                const left = (i / (TIERS.length - 1)) * 100;
-                const reached = i <= current;
-                const isHover = hover === t.k;
+                const left = (t.refs / TIERS[TIERS.length - 1].refs) * 100;
+                const reached = t.refs <= myRefs;
                 return (
-                  <div key={t.k}
-                    onMouseEnter={() => setHover(t.k)}
-                    style={{
-                      position: 'absolute', top: -8, left: `${left}%`, transform: 'translateX(-50%)',
-                      cursor: 'pointer',
-                    }}
-                  >
+                  <div key={t.k} onMouseEnter={() => setHover(t.k)}
+                    style={{ position: 'absolute', top: -8, left: `${left}%`, transform: 'translateX(-50%)', cursor: 'pointer' }}>
                     <div style={{
-                      width: 18, height: 18, borderRadius: 0,
-                      transform: 'rotate(45deg)',
+                      width: 18, height: 18, transform: 'rotate(45deg)',
                       background: reached ? 'var(--gold)' : 'var(--paper)',
                       border: '1px solid ' + (reached ? 'var(--gold)' : 'var(--hair-strong)'),
                       transition: 'all .3s ease',
-                      boxShadow: isHover ? '0 0 0 4px var(--gold-tint)' : 'none',
+                      boxShadow: hover === t.k ? '0 0 0 4px var(--gold-tint)' : 'none',
                     }} />
-                    <div style={{
-                      position: 'absolute', top: 28, left: '50%', transform: 'translateX(-50%)',
-                      whiteSpace: 'nowrap', textAlign: 'center',
-                    }}>
-                      <div className="tier-chip" style={{ justifyContent: 'center' }}>
-                        <span className={`swatch ${t.k}`} /> {t.name}
-                      </div>
-                      <div className="num" style={{ fontSize: 11, color: 'var(--mute)', marginTop: 2 }}>{t.pts.toLocaleString()} pts</div>
+                    <div style={{ position: 'absolute', top: 28, left: '50%', transform: 'translateX(-50%)', whiteSpace: 'nowrap', textAlign: 'center' }}>
+                      <div className="tier-chip" style={{ justifyContent: 'center' }}><span className={`swatch ${t.k}`} /> {t.name}</div>
+                      <div className="num" style={{ fontSize: 11, color: 'var(--mute)', marginTop: 2 }}>{t.refs} referrals</div>
                     </div>
                   </div>
                 );
               })}
             </div>
 
-            {/* Hovered tier benefits */}
             <div className="panel" style={{ marginTop: 18, padding: 18 }}>
               <div className="row between center">
                 <div className="tier-chip"><span className={`swatch ${hover}`} /> {TIERS.find(t => t.k === hover)?.name} benefits</div>
-                {hover === 'gold' && <span className="tag gold"><span className="led" /> Current</span>}
-                {hover === 'elite' && <span className="tag">Next · 660 pts</span>}
+                {hover === currentTier.k && <span className="tag gold"><span className="led" /> Current</span>}
               </div>
-              <div className="col" style={{ marginTop: 12, gap: 6 }}>
+              <div style={{ marginTop: 10, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, padding: '10px', background: 'var(--paper-2)', borderRadius: 'var(--r-3)', marginBottom: 12 }}>
+                <div>
+                  <div className="eyebrow" style={{ fontSize: 9 }}>You save</div>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--gold)', marginTop: 2 }}>{TIERS.find(t => t.k === hover)?.youSave}</div>
+                </div>
+                <div>
+                  <div className="eyebrow" style={{ fontSize: 9 }}>Your friend saves</div>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--brand)', marginTop: 2 }}>{TIERS.find(t => t.k === hover)?.friendSaves}</div>
+                </div>
+              </div>
+              <div className="col" style={{ gap: 6 }}>
                 {TIERS.find(t => t.k === hover)?.perks.map((p, i) => (
                   <div key={i} className="row center" style={{ gap: 8, fontSize: 13 }}>
                     <IconCheck size={12} style={{ color: 'var(--gold)' }} /> {p}
@@ -326,104 +277,80 @@ const LoyaltyDesktop = () => {
           </div>
         </div>
 
-        {/* Lower: earnings + redemptions */}
+        {/* Lower: referrals + how it works */}
         <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr', overflow: 'hidden' }}>
-          {/* Earnings ledger */}
+          {/* Referral history */}
           <div style={{ padding: 'var(--pad-4)', borderRight: '1px solid var(--hair)', overflow: 'auto' }}>
-            <div className="eyebrow">Recent earnings</div>
+            <div className="eyebrow">Your referrals · {myRefs} friends joined</div>
             <div className="col" style={{ marginTop: 14 }}>
-              {[
-                ['13 May', 'Hydrafacial · Phase 2', '+450', 'earned'],
-                ['08 May', 'Vitamin C serum 30ml', '+85', 'earned'],
-                ['30 Apr', 'Chemical peel · TCA', '+520', 'earned'],
-                ['22 Apr', 'Redeemed · facial mask', '-200', 'redeem'],
-                ['11 Apr', 'Chemical peel · TCA', '+520', 'earned'],
-                ['28 Mar', 'Referral · Aisha Kapoor', '+250', 'referral'],
-                ['14 Mar', 'Initial consultation', '+150', 'earned'],
-              ].map(([d, t, p, kind], i) => (
-                <div key={i} className="row between center" style={{
-                  padding: '12px 0',
-                  borderBottom: '1px solid var(--hair)',
-                }}>
+              {MY_REFERRALS.map((r, i) => (
+                <div key={i} className="row between center" style={{ padding: '12px 0', borderBottom: '1px solid var(--hair)' }}>
                   <div className="row center" style={{ gap: 14 }}>
-                    <div className="num" style={{ fontSize: 11, color: 'var(--mute)', width: 50 }}>{d}</div>
+                    <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--paper-3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 600, color: 'var(--mute)' }}>
+                      {r.name.split(' ').map(n => n[0]).join('')}
+                    </div>
                     <div>
-                      <div style={{ fontSize: 13 }}>{t}</div>
-                      <div className="eyebrow" style={{ fontSize: 9 }}>{kind}</div>
+                      <div style={{ fontSize: 13, fontWeight: 500 }}>{r.name}</div>
+                      <div className="eyebrow" style={{ fontSize: 9 }}>{r.date} · {r.status}</div>
                     </div>
                   </div>
-                  <div className="num" style={{
-                    fontSize: 14,
-                    color: kind === 'redeem' ? 'var(--alert)' : 'var(--ink)',
-                    fontWeight: 500,
-                  }}>{p}</div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div className="num" style={{ fontSize: 12, color: 'var(--gold)' }}>You saved {r.youSaved}</div>
+                    <div className="num" style={{ fontSize: 11, color: 'var(--mute)' }}>Friend saved {r.saved}</div>
+                  </div>
                 </div>
               ))}
+              <div style={{ marginTop: 20, padding: '14px', background: 'var(--paper-2)', borderRadius: 'var(--r-3)', border: '1px dashed var(--hair-strong)', textAlign: 'center' }}>
+                <div style={{ fontSize: 13, color: 'var(--mute)' }}>Refer {refsToNext} more to unlock Platinum</div>
+                <div style={{ fontSize: 12, color: 'var(--brand)', marginTop: 4, fontWeight: 500 }}>Both get ₹500 off · 20% off your treatments</div>
+                <button className="btn sm" style={{ marginTop: 12 }}>Invite a friend</button>
+              </div>
             </div>
           </div>
 
-          {/* Redemption catalog */}
+          {/* How it works */}
           <div style={{ padding: 'var(--pad-4)', borderRight: '1px solid var(--hair)', overflow: 'auto' }}>
-            <div className="eyebrow">Redeem · marketplace</div>
-            <div className="col" style={{ marginTop: 14, gap: 12 }}>
+            <div className="eyebrow">How referrals work</div>
+            <div className="col" style={{ marginTop: 14, gap: 16 }}>
               {[
-                { t: 'Hydrating sheet mask', sub: 'Pack of 5', p: 800, avail: true },
-                { t: 'Vitamin C serum', sub: '30ml', p: 1500, avail: true },
-                { t: 'Mini facial', sub: '30 min', p: 2200, avail: true },
-                { t: 'Premium hydrafacial', sub: '60 min', p: 4500, avail: false, until: 'Elite' },
-                { t: 'LED light therapy', sub: '45 min', p: 3800, avail: false, until: 'Elite' },
-              ].map((r, i) => (
-                <div key={i} className="panel" style={{ padding: 12 }}>
-                  <div className="row between center">
-                    <div>
-                      <div style={{ fontSize: 13, fontWeight: 500 }}>{r.t}</div>
-                      <div className="muted" style={{ fontSize: 11 }}>{r.sub}</div>
-                    </div>
-                    <div className="num" style={{ fontSize: 16, color: r.avail ? 'var(--ink)' : 'var(--mute-2)' }}>{r.p.toLocaleString()}<span style={{ fontSize: 11, color: 'var(--mute)', marginLeft: 2 }}>pts</span></div>
-                  </div>
-                  <div style={{ marginTop: 8 }}>
-                    {r.avail
-                      ? <button className="btn ghost sm" style={{ width: '100%' }}>Redeem</button>
-                      : <div className="tag" style={{ width: '100%', justifyContent: 'center', color: 'var(--mute)' }}>Unlock at {r.until}</div>
-                    }
+                { step: '1', title: 'Share your code', desc: 'Send your personal referral link or code to a friend.' },
+                { step: '2', title: 'Friend books first visit', desc: 'When they book and complete their first Kaya session, the discount applies.' },
+                { step: '3', title: 'Both of you save', desc: 'They get ₹300 off (Gold) or ₹500 off (Platinum). You get your tier discount on all future treatments.' },
+                { step: '4', title: 'You level up', desc: 'Each verified referral moves you closer to Platinum, unlocking more savings for both of you.' },
+              ].map((s, i) => (
+                <div key={i} className="row center" style={{ gap: 14, alignItems: 'flex-start' }}>
+                  <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--gold)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, flexShrink: 0 }}>{s.step}</div>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 600 }}>{s.title}</div>
+                    <div className="muted" style={{ fontSize: 12, marginTop: 3 }}>{s.desc}</div>
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Side panel: 12-month projection */}
-          <div style={{ padding: 'var(--pad-4)', background: 'var(--ink)', color: 'var(--paper)' }}>
-            <div className="eyebrow" style={{ color: 'var(--mute-2)' }}>12-month projection</div>
-            <div className="display" style={{ fontSize: 30, color: 'var(--paper)', marginTop: 10 }}>
-              At your current pace, you'll reach <em>Platinum</em> by <em>Apr 2027</em>.
-            </div>
-
-            <div className="axis" style={{ marginTop: 28, borderColor: 'rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.55)' }}>
-              <span>JUN</span><span>SEP</span><span>DEC</span><span>MAR</span><span>JUN '27</span>
-            </div>
-            <div className="spark gold" style={{ height: 100, marginTop: 8, alignItems: 'flex-end' }}>
-              {[14, 18, 22, 28, 34, 40, 48, 56, 64, 72, 80, 88, 96].map((h, i) => (
-                <i key={i} style={{ height: `${h}%`, width: 8, background: i > 8 ? 'var(--gold)' : 'rgba(255,255,255,0.4)' }} />
+          {/* Tier comparison */}
+          <div style={{ padding: 'var(--pad-4)', background: 'var(--ink)', color: 'var(--paper)', overflow: 'auto' }}>
+            <div className="eyebrow" style={{ color: 'var(--mute-2)' }}>All tiers at a glance</div>
+            <div className="col" style={{ marginTop: 14, gap: 12 }}>
+              {TIERS.map((t, i) => (
+                <div key={t.k} style={{ padding: 14, borderRadius: 'var(--r-3)', background: t.k === 'gold' ? 'rgba(201,168,76,0.15)' : 'rgba(255,255,255,0.04)', border: t.k === 'gold' ? '1px solid rgba(201,168,76,0.4)' : '1px solid rgba(255,255,255,0.08)' }}>
+                  <div className="row between center">
+                    <div className="tier-chip" style={{ color: 'var(--paper)' }}><span className={`swatch ${t.k}`} /> {t.name}</div>
+                    <div className="num" style={{ fontSize: 11, color: 'var(--mute-2)' }}>{t.refs}+ refs</div>
+                  </div>
+                  <div className="row" style={{ marginTop: 8, gap: 12 }}>
+                    <div>
+                      <div style={{ fontSize: 10, color: 'var(--mute-2)' }}>YOU</div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--gold)' }}>{t.youSave}</div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 10, color: 'var(--mute-2)' }}>FRIEND</div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--brand)' }}>{t.friendSaves}</div>
+                    </div>
+                  </div>
+                </div>
               ))}
-            </div>
-
-            <div className="hr" style={{ background: 'rgba(255,255,255,0.12)', margin: '24px 0' }} />
-
-            <div className="eyebrow" style={{ color: 'var(--mute-2)' }}>Stats this year</div>
-            <div className="row" style={{ marginTop: 12, gap: 22 }}>
-              <div>
-                <div className="num" style={{ fontSize: 30 }}>14</div>
-                <div className="eyebrow" style={{ fontSize: 9 }}>visits</div>
-              </div>
-              <div>
-                <div className="num" style={{ fontSize: 30 }}>3</div>
-                <div className="eyebrow" style={{ fontSize: 9 }}>referrals</div>
-              </div>
-              <div>
-                <div className="num" style={{ fontSize: 30 }}>₹48k</div>
-                <div className="eyebrow" style={{ fontSize: 9 }}>saved</div>
-              </div>
             </div>
           </div>
         </div>
@@ -432,74 +359,95 @@ const LoyaltyDesktop = () => {
   );
 };
 
-const LoyaltyMobile = () => (
-  <MobileShell active="rewards">
-    <div style={{ padding: '16px 20px 100px', height: '100%', overflow: 'auto', color: 'var(--paper)' }}>
-      <div className="eyebrow gold dot">Loyalty · Gold member</div>
-      <div className="display" style={{ fontSize: 56, marginTop: 12, color: 'var(--paper)' }}>
-        <em>2,840</em>
-      </div>
-      <div className="eyebrow" style={{ color: 'var(--mute-2)' }}>skin points</div>
+const LoyaltyMobile = () => {
+  const myRefs = 3;
+  const nextTier = TIERS[1]; // Platinum
+  const refsToNext = nextTier.refs - myRefs;
+  return (
+    <MobileShell active="home">
+      <div style={{ padding: '16px 20px 100px', height: '100%', overflow: 'auto' }}>
+        <div className="eyebrow gold dot">Membership · Gold</div>
+        <div className="display" style={{ fontSize: 44, marginTop: 10 }}><em>{myRefs}</em></div>
+        <div style={{ fontSize: 13, color: 'var(--mute)', marginTop: 2 }}>referrals made · ₹900 saved together</div>
 
-      {/* progression */}
-      <div style={{ marginTop: 28 }}>
-        <div className="row between" style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--mute-2)' }}>
-          <span>Gold</span><span style={{ color: 'var(--gold)' }}>660 to Elite</span>
-        </div>
-        <div style={{ marginTop: 8, height: 4, background: 'rgba(255,255,255,0.12)' }}>
-          <div style={{ height: '100%', background: 'var(--gold)', width: '81%', transition: 'width 1s ease' }} />
-        </div>
-        <div className="row between" style={{ marginTop: 14 }}>
-          {TIERS.map((t, i) => (
-            <div key={t.k} style={{ textAlign: 'center', flex: 1 }}>
-              <div style={{
-                width: 14, height: 14, transform: 'rotate(45deg)',
-                background: i <= 1 ? 'var(--gold)' : 'transparent',
-                border: '1px solid ' + (i <= 1 ? 'var(--gold)' : 'rgba(255,255,255,0.3)'),
-                margin: '0 auto',
-              }} />
-              <div className="eyebrow" style={{ marginTop: 12, fontSize: 9, color: i === 1 ? 'var(--gold)' : 'var(--mute-2)' }}>{t.name}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="panel" style={{ marginTop: 28, padding: 16, background: 'rgba(255,255,255,0.04)', borderColor: 'rgba(255,255,255,0.12)' }}>
-        <div className="eyebrow" style={{ color: 'var(--gold)' }}>Up next · Elite benefits</div>
-        <div className="col" style={{ marginTop: 12, gap: 6 }}>
-          {['18% off treatments', 'Dedicated dermatologist', '2 free facials per year', 'Lab panels included'].map((p, i) => (
-            <div key={i} className="row center" style={{ gap: 8, fontSize: 13 }}>
-              <IconCheck size={12} style={{ color: 'var(--gold)' }} /> {p}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="eyebrow" style={{ marginTop: 28, color: 'var(--mute-2)' }}>Recent</div>
-      <div className="col" style={{ marginTop: 10 }}>
-        {[['13 May', 'Hydrafacial', '+450'], ['30 Apr', 'Chemical peel', '+520'], ['28 Mar', 'Referral · Aisha', '+250']].map(([d, t, p], i) => (
-          <div key={i} className="row between center" style={{ padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-            <div>
-              <div style={{ fontSize: 13 }}>{t}</div>
-              <div className="num" style={{ fontSize: 10, color: 'var(--mute-2)' }}>{d}</div>
-            </div>
-            <div className="num" style={{ fontSize: 14, color: 'var(--gold)' }}>{p}</div>
+        {/* Tier progress */}
+        <div style={{ marginTop: 20 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: 'var(--mute)', fontFamily: 'var(--mono)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            <span style={{ color: 'var(--gold)' }}>Gold · {myRefs} refs</span>
+            <span>Platinum · {refsToNext} more to go</span>
           </div>
-        ))}
+          <div style={{ marginTop: 8, height: 5, background: 'var(--hair-2)', borderRadius: 3 }}>
+            <div style={{ height: '100%', background: 'var(--gold)', width: `${(myRefs / TIERS[TIERS.length - 1].refs) * 100}%`, borderRadius: 3, transition: 'width 1s ease' }} />
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
+            {TIERS.map((t, i) => (
+              <div key={t.k} style={{ textAlign: 'center' }}>
+                <div style={{ width: 12, height: 12, transform: 'rotate(45deg)', background: t.refs <= myRefs ? 'var(--gold)' : 'var(--hair-2)', margin: '0 auto' }} />
+                <div style={{ fontSize: 9, color: t.refs <= myRefs ? 'var(--gold)' : 'var(--mute-2)', marginTop: 6, fontFamily: 'var(--mono)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{t.name}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Current benefits */}
+        <div className="panel" style={{ marginTop: 18, padding: 16 }}>
+          <div className="eyebrow gold dot">Your Gold benefits</div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 12, padding: 12, background: 'var(--paper-2)', borderRadius: 'var(--r-3)' }}>
+            <div>
+              <div style={{ fontSize: 10, color: 'var(--mute)', fontFamily: 'var(--mono)' }}>YOU SAVE</div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--gold)', marginTop: 2 }}>12% off</div>
+              <div style={{ fontSize: 10, color: 'var(--mute)', marginTop: 1 }}>all treatments</div>
+            </div>
+            <div>
+              <div style={{ fontSize: 10, color: 'var(--mute)', fontFamily: 'var(--mono)' }}>FRIEND SAVES</div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--brand)', marginTop: 2 }}>₹300 off</div>
+              <div style={{ fontSize: 10, color: 'var(--mute)', marginTop: 1 }}>their first visit</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Unlock Platinum */}
+        <div className="panel" style={{ marginTop: 12, padding: 14, background: 'var(--paper-2)' }}>
+          <div className="eyebrow">Unlock Platinum · {refsToNext} more referrals</div>
+          <div style={{ marginTop: 10, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+            <div style={{ padding: '10px 12px', background: 'var(--paper)', borderRadius: 'var(--r-3)', border: '1px solid var(--hair)' }}>
+              <div style={{ fontSize: 10, color: 'var(--mute)' }}>YOU GET</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--gold)', marginTop: 2 }}>20% off</div>
+            </div>
+            <div style={{ padding: '10px 12px', background: 'var(--paper)', borderRadius: 'var(--r-3)', border: '1px solid var(--hair)' }}>
+              <div style={{ fontSize: 10, color: 'var(--mute)' }}>FRIEND GETS</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--brand)', marginTop: 2 }}>₹500 off</div>
+            </div>
+          </div>
+          <button className="btn sm" style={{ marginTop: 12, width: '100%', justifyContent: 'center' }}>Share referral link</button>
+        </div>
+
+        {/* Referral history */}
+        <div style={{ marginTop: 18 }}>
+          <div className="eyebrow" style={{ marginBottom: 10 }}>Referrals · {myRefs} friends joined</div>
+          {MY_REFERRALS.map((r, i) => (
+            <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid var(--hair)' }}>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 500 }}>{r.name}</div>
+                <div style={{ fontSize: 11, color: 'var(--mute)', marginTop: 1 }}>{r.date} · {r.status}</div>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--gold)' }}>{r.youSaved}</div>
+                <div style={{ fontSize: 10, color: 'var(--mute)', marginTop: 1 }}>you saved</div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
-  </MobileShell>
-);
+    </MobileShell>
+  );
+};
 
 export default function LoyaltyPage() {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  return isMobile ? <LoyaltyMobile /> : <LoyaltyDesktop />;
+  return (
+    <>
+      <div className="desktop-only"><LoyaltyDesktop /></div>
+      <div className="mobile-only"><LoyaltyMobile /></div>
+    </>
+  );
 }

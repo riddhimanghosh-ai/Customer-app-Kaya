@@ -343,19 +343,10 @@ const HomeMobile = () => (
 );
 
 export default function Home() {
-  const [isMobile, setIsMobile] = useState(false);
-
   useEffect(() => {
     const user = localStorage.getItem('user');
-    if (user) {
-      window.location.href = '/dashboard';
-    }
-
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    window.location.replace(user ? '/dashboard' : '/login');
   }, []);
-
-  return isMobile ? <HomeMobile /> : <HomeDesktop />;
+  return null;
 }
+
