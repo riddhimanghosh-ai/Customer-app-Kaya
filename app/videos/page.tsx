@@ -27,10 +27,9 @@ const IconSearch = ({ size = 24, ...props }) => <svg width={size} height={size} 
 
 const Brand = () => <span style={{ fontSize: 14, fontWeight: 700, letterSpacing: '0.04em' }}>KAYA</span>;
 
-const NavItem = ({ icon: Icon, label, active, href = '#', ...props }) => (
+const NavItem = ({ icon: Icon, label, active, href = '#' }) => (
   <Link href={href}>
-    <button
-      {...props}
+    <div
       style={{
         display: 'flex',
         flexDirection: 'column',
@@ -47,7 +46,7 @@ const NavItem = ({ icon: Icon, label, active, href = '#', ...props }) => (
     >
       <Icon size={20} />
       {label}
-    </button>
+    </div>
   </Link>
 );
 

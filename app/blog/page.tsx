@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 const ARTICLES = [
   { tag: 'Pigmentation', title: 'The science of melasma — and why retinoids alone won\'t solve it',  author: 'Dr. Anika Mehra', read: '8 min', date: 'May 22', feat: true },
@@ -25,26 +26,27 @@ const IconSearch = ({ size = 24, ...props }) => <svg width={size} height={size} 
 
 const Brand = () => <span style={{ fontSize: 14, fontWeight: 700, letterSpacing: '0.04em' }}>KAYA</span>;
 
-const NavItem = ({ icon: Icon, label, active, ...props }) => (
-  <button
-    {...props}
-    style={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      gap: 4,
-      padding: '12px 8px',
-      background: active ? 'var(--paper-2)' : 'transparent',
-      border: 0,
-      cursor: 'pointer',
-      fontSize: 9,
-      color: active ? 'var(--ink)' : 'var(--mute)',
-      transition: 'all 0.2s ease',
-    }}
-  >
-    <Icon size={20} />
-    {label}
-  </button>
+const NavItem = ({ icon: Icon, label, active, href = '#' }) => (
+  <Link href={href}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: 4,
+        padding: '12px 8px',
+        background: active ? 'var(--paper-2)' : 'transparent',
+        border: 0,
+        cursor: 'pointer',
+        fontSize: 9,
+        color: active ? 'var(--ink)' : 'var(--mute)',
+        transition: 'all 0.2s ease',
+      }}
+    >
+      <Icon size={20} />
+      {label}
+    </div>
+  </Link>
 );
 
 const NavRail = ({ active }) => (

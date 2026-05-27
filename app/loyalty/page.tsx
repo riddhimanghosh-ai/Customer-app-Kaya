@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 const Icon = ({ children, size = 24, className = '' }: { children: React.ReactNode; size?: number; className?: string }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -99,25 +100,26 @@ const Brand = () => (
   </div>
 );
 
-const NavItem = ({ icon: Icon, label, active = false }: { icon: React.ComponentType<any>; label: string; active?: boolean }) => (
-  <button style={{
-    padding: 'var(--pad-2) var(--pad-3)',
-    fontSize: 13,
-    border: 'none',
-    background: 'none',
-    cursor: 'pointer',
-    color: active ? 'var(--brand)' : 'var(--mute-2)',
-    display: 'flex',
-    alignItems: 'center',
-    gap: 10,
-    width: '100%',
-    transition: 'color 0.2s',
-    borderLeft: active ? '2px solid var(--brand)' : '2px solid transparent',
-    fontWeight: active ? 500 : 400,
-  }}>
-    <Icon size={18} />
-    {label}
-  </button>
+const NavItem = ({ icon: Icon, label, active = false, href = '#' }: { icon: React.ComponentType<any>; label: string; active?: boolean; href?: string }) => (
+  <Link href={href} style={{ textDecoration: 'none', width: '100%' }}>
+    <div style={{
+      padding: 'var(--pad-2) var(--pad-3)',
+      fontSize: 13,
+      background: 'none',
+      cursor: 'pointer',
+      color: active ? 'var(--brand)' : 'var(--mute-2)',
+      display: 'flex',
+      alignItems: 'center',
+      gap: 10,
+      width: '100%',
+      transition: 'color 0.2s',
+      borderLeft: active ? '2px solid var(--brand)' : '2px solid transparent',
+      fontWeight: active ? 500 : 400,
+    }}>
+      <Icon size={18} />
+      {label}
+    </div>
+  </Link>
 );
 
 const NavRail = ({ active }: { active: string }) => (
@@ -133,23 +135,23 @@ const NavRail = ({ active }: { active: string }) => (
     <nav style={{ display: 'flex', flexDirection: 'column', overflow: 'auto' }}>
       <div style={{ padding: 'var(--pad-2) 0' }}>
         {[
-          { k: 'home', icon: IconHome, label: 'Home' },
-          { k: 'appointments', icon: IconAppt, label: 'Sessions' },
-          { k: 'progress', icon: IconProgress, label: 'Progress' },
-          { k: 'medications', icon: IconMed, label: 'Medications' },
-          { k: 'chat', icon: IconChat, label: 'Chat' },
+          { k: 'home', icon: IconHome, label: 'Home', href: '/' },
+          { k: 'appointments', icon: IconAppt, label: 'Sessions', href: '/sessions' },
+          { k: 'progress', icon: IconProgress, label: 'Progress', href: '/before-after' },
+          { k: 'medications', icon: IconMed, label: 'Medications', href: '/prescriptions' },
+          { k: 'chat', icon: IconChat, label: 'Chat', href: '/chat' },
         ].map((item) => (
-          <NavItem key={item.k} icon={item.icon} label={item.label} active={active === item.k} />
+          <NavItem key={item.k} icon={item.icon} label={item.label} href={item.href} active={active === item.k} />
         ))}
       </div>
       <div style={{ borderTop: '1px solid var(--hair)', padding: 'var(--pad-2) 0' }}>
         {[
-          { k: 'loyalty', icon: IconRewards, label: 'Loyalty' },
-          { k: 'referral', icon: IconRefer, label: 'Refer' },
-          { k: 'blog', icon: IconBlog, label: 'Blog' },
-          { k: 'video', icon: IconVideo, label: 'Videos' },
+          { k: 'loyalty', icon: IconRewards, label: 'Loyalty', href: '/loyalty' },
+          { k: 'referral', icon: IconRefer, label: 'Refer', href: '/referral' },
+          { k: 'blog', icon: IconBlog, label: 'Blog', href: '/blog' },
+          { k: 'video', icon: IconVideo, label: 'Videos', href: '/videos' },
         ].map((item) => (
-          <NavItem key={item.k} icon={item.icon} label={item.label} active={active === item.k} />
+          <NavItem key={item.k} icon={item.icon} label={item.label} href={item.href} active={active === item.k} />
         ))}
       </div>
     </nav>
