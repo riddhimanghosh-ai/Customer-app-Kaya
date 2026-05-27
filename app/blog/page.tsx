@@ -54,15 +54,15 @@ const NavRail = ({ active }) => (
     <div style={{ paddingBottom: 12, marginBottom: 12, borderBottom: '1px solid var(--hair)', width: '100%', textAlign: 'center' }}>
       <Brand />
     </div>
-    <NavItem icon={IconHome} label="Home" active={active === 'home'} />
-    <NavItem icon={IconAppt} label="Sessions" active={active === 'sessions'} />
-    <NavItem icon={IconMed} label="Prescriptions" active={active === 'prescriptions'} />
-    <NavItem icon={IconProgress} label="Progress" active={active === 'progress'} />
-    <NavItem icon={IconChat} label="Chat" active={active === 'chat'} />
-    <NavItem icon={IconRewards} label="Loyalty" active={active === 'loyalty'} />
-    <NavItem icon={IconRefer} label="Refer" active={active === 'refer'} />
-    <NavItem icon={IconBlog} label="Blog" active={active === 'blog'} />
-    <NavItem icon={IconVideo} label="Videos" active={active === 'videos'} />
+    <NavItem icon={IconHome} label="Home" active={active === 'home'} href="/" />
+    <NavItem icon={IconAppt} label="Sessions" active={active === 'sessions'} href="/sessions" />
+    <NavItem icon={IconMed} label="Prescriptions" active={active === 'prescriptions'} href="/prescriptions" />
+    <NavItem icon={IconProgress} label="Progress" active={active === 'progress'} href="/before-after" />
+    <NavItem icon={IconChat} label="Chat" active={active === 'chat'} href="/chat" />
+    <NavItem icon={IconRewards} label="Loyalty" active={active === 'loyalty'} href="/loyalty" />
+    <NavItem icon={IconRefer} label="Refer" active={active === 'refer'} href="/referral" />
+    <NavItem icon={IconBlog} label="Blog" active={active === 'blog'} href="/blog" />
+    <NavItem icon={IconVideo} label="Videos" active={active === 'videos'} href="/videos" />
   </div>
 );
 
