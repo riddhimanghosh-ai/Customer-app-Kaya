@@ -255,7 +255,7 @@ export default function ChatbotPage() {
 
   useEffect(() => {
     if (!localStorage.getItem('user')) router.push('/login');
-    setVoiceOk(!!(window.SpeechRecognition || (window as any).webkitSpeechRecognition));
+    setVoiceOk(!!((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition));
   }, [router]);
 
   // Only scroll when a new message is added (length changes), not on every re-render

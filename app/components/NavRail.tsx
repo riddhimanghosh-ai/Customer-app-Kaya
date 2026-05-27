@@ -89,6 +89,27 @@ export default function NavRail({ active = 'dashboard' }: { active?: string }) {
             <div style={{ fontSize: 13, fontWeight: 500 }}>Priya R.</div>
             <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--mute)' }}>ID · 8842·G</div>
           </div>
+          <button
+            onClick={() => {
+              localStorage.removeItem('user');
+              router.push('/login');
+            }}
+            title="Sign out"
+            style={{
+              background: 'none', border: 'none', cursor: 'pointer',
+              padding: 6, borderRadius: 6, color: 'var(--mute)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              transition: 'color 0.15s, background 0.15s',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.color = 'var(--brand)'; e.currentTarget.style.background = 'var(--brand-tint)'; }}
+            onMouseLeave={e => { e.currentTarget.style.color = 'var(--mute)'; e.currentTarget.style.background = 'none'; }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              <polyline points="16 17 21 12 16 7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+          </button>
         </div>
       </div>
     </div>

@@ -22,7 +22,8 @@ const IconPkg   = () => <Ico><path d="M3.5 7 L12 4 L20.5 7 V17 L12 20 L3.5 17 Z"
 const IconBlog  = () => <Ico><path d="M5 4 H17 L19.5 6.5 V20 H5 Z"/><path d="M8 9 H16 M8 12 H16 M8 15 H13"/><G cx={17.5} cy={6.5}/></Ico>;
 const IconVideo = () => <Ico><rect x="3" y="5.5" width="18" height="13" rx="1.5"/><path d="M10.5 9.5 L14.5 12 L10.5 14.5 Z" fill="currentColor" stroke="none"/><G cx={20} cy={8} r={1.2}/></Ico>;
 const IconSum   = () => <Ico><path d="M5 4 H15 L19 8 V20 H5 Z"/><path d="M8 10 H16 M8 13 H16 M8 16 H12"/><G cx={15} cy={8}/></Ico>;
-const IconX     = () => <Ico><path d="M18 6 L6 18 M6 6 L18 18"/></Ico>;
+const IconX       = () => <Ico><path d="M18 6 L6 18 M6 6 L18 18"/></Ico>;
+const IconLogout  = () => <Ico><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></Ico>;
 
 const MORE_ITEMS = [
   { icon: <IconSum/>,     label: 'Summaries',  path: '/summary',     color: '#fff8ee' },
@@ -36,6 +37,12 @@ const MORE_ITEMS = [
 export default function MobileTabBar({ active = 'home' }: { active?: string }) {
   const router = useRouter();
   const [showMore, setShowMore] = useState(false);
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    setShowMore(false);
+    router.push('/login');
+  };
 
   return (
     <>
@@ -82,6 +89,21 @@ export default function MobileTabBar({ active = 'home' }: { active?: string }) {
                   <span style={{ fontSize: 12, fontWeight: 600 }}>{item.label}</span>
                 </button>
               ))}
+            </div>
+
+            {/* Sign out */}
+            <div style={{ padding: '16px 16px 0' }}>
+              <button onClick={handleLogout} style={{
+                width: '100%', display: 'flex', alignItems: 'center', gap: 12,
+                padding: '14px 16px', background: '#fff5f5',
+                border: '1px solid #fdd', borderRadius: 14,
+                cursor: 'pointer', color: '#c0392b',
+              }}>
+                <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(255,255,255,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <IconLogout/>
+                </div>
+                <span style={{ fontSize: 14, fontWeight: 600 }}>Sign out</span>
+              </button>
             </div>
           </div>
         </div>

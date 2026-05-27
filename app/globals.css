@@ -629,11 +629,12 @@ body {
 .panel.brand-fill { background: var(--brand-tint-2); border-color: transparent; }
 
 /* ─── Responsive layout helpers ─── */
-.desktop-only { display: block; height: 100%; }
-.mobile-only  { display: none; height: 100vh; }
-@media (max-width: 1023px) {
-  .desktop-only { display: none !important; }
-  .mobile-only  { display: block !important; }
+/* mobile-first: mobile view is default, desktop only on wide screens */
+.desktop-only { display: none; height: 100%; }
+.mobile-only  { display: block; height: 100vh; }
+@media (min-width: 1024px) {
+  .desktop-only { display: block !important; height: 100%; }
+  .mobile-only  { display: none !important; }
 }
 
 /* Force-override via toggle button */
