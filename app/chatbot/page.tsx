@@ -91,7 +91,7 @@ const QUICK = [
 
 /* Props-based sub-components */
 const MessageList = memo(({ messages, loading, bottomRef }: {
-  messages: Message[]; loading: boolean; bottomRef: React.RefObject<HTMLDivElement>;
+  messages: Message[]; loading: boolean; bottomRef: React.RefObject<HTMLDivElement | null>;
 }) => (
   <div style={{
     overflowY: 'auto', overflowX: 'hidden',
@@ -169,7 +169,7 @@ const InputBar = memo(({ input, loading, isListening, voiceOk, focused,
   onInput: (v: string) => void; onKeyDown: (e: React.KeyboardEvent) => void;
   onFocus: () => void; onBlur: () => void;
   onSend: () => void; onVoice: () => void;
-  inputRef: React.RefObject<HTMLInputElement>;
+  inputRef: React.RefObject<HTMLInputElement | null>;
 }) => (
   <div style={{
     padding: '10px 16px 14px',
@@ -291,7 +291,7 @@ export default function ChatbotPage() {
 
   const toggleVoice = useCallback(() => {
     if (isListening) { recRef.current?.stop(); return; }
-    const SR = window.SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SR) return;
     const r = new SR();
     r.lang = 'en-IN'; r.interimResults = false; r.maxAlternatives = 1;
