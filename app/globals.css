@@ -1,0 +1,294 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap');
+
+:root {
+  /* Slate ink (cool, matches design) */
+  --ink: #2A3441;
+  --ink-2: #1F2832;
+  --ink-3: #475569;
+  --paper: #F0F4FA;            /* cool pale blue ground */
+  --paper-2: #FFFFFF;            /* white surface */
+  --paper-3: #E6ECF4;
+  --paper-tint: #F7FAFD;
+  --paper-grad: linear-gradient(180deg, #EEF2F8 0%, #F5F8FC 60%, #FAFCFE 100%);
+  --hair: rgba(46,60,76,0.08);
+  --hair-2: rgba(46,60,76,0.14);
+  --hair-strong: rgba(46,60,76,0.30);
+  --mute: #64748B;
+  --mute-2: #94A3B8;
+
+  /* Brand · terracotta */
+  --brand: #B27450;
+  --brand-2: #C68666;
+  --brand-deep: #8E5A3A;
+  --brand-tint: #F5E6DC;
+  --brand-tint-2: #FBEFE5;
+  --brand-rule: rgba(178,116,80,0.40);
+  --brand-glow: rgba(178,116,80,0.18);
+
+  /* Additional accents — section colour-coding */
+  --mint: #4DA088;
+  --mint-2: #6DBBA5;
+  --mint-tint: #E3F0EB;
+  --lavender: #8B7AB8;
+  --lavender-2: #A593CC;
+  --lavender-tint: #EDE9F4;
+  --sky: #6CA8C9;
+  --sky-2: #8AC0DD;
+  --sky-tint: #E1EEF5;
+  --coral: #D67862;
+  --coral-tint: #F8E1DB;
+  --signal: var(--mint);
+  --signal-tint: var(--mint-tint);
+  --alert: var(--coral);
+  --alert-tint: var(--coral-tint);
+
+  /* Type */
+  --sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --serif: "Newsreader", "Times New Roman", serif;
+
+  /* Radius */
+  --r-1: 6px;
+  --r-2: 10px;
+  --r-3: 14px;
+  --r-4: 20px;
+  --r-pill: 999px;
+
+  /* Shadow */
+  --sh-card: 0 1px 2px rgba(46,60,76,0.04), 0 6px 24px rgba(46,60,76,0.06);
+  --sh-pop: 0 2px 6px rgba(46,60,76,0.06), 0 18px 50px rgba(46,60,76,0.12);
+  --sh-inset: inset 0 0 0 1px rgba(46,60,76,0.06);
+
+  /* Density */
+  --pad-1: 10px;
+  --pad-2: 16px;
+  --pad-3: 22px;
+  --pad-4: 32px;
+  --pad-5: 48px;
+}
+
+@theme inline {
+  --color-ink: var(--ink);
+  --color-paper: var(--paper);
+  --color-brand: var(--brand);
+  --color-mint: var(--mint);
+  --color-lavender: var(--lavender);
+  --color-sky: var(--sky);
+  --color-coral: var(--coral);
+  --font-sans: var(--sans);
+  --font-mono: var(--mono);
+  --font-serif: var(--serif);
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+}
+
+/* Base styles */
+body {
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: -0.005em;
+}
+
+/* Pill button styling */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 46px;
+  padding: 0 22px;
+  background: var(--brand);
+  color: white;
+  border: 1px solid var(--brand);
+  border-radius: var(--r-pill);
+  font: 600 13px / 1 var(--sans);
+  letter-spacing: -0.005em;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 1px 2px rgba(178,116,80,0.18), 0 6px 16px rgba(178,116,80,0.18);
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  background: var(--brand-deep);
+  box-shadow: 0 2px 4px rgba(178,116,80,0.22), 0 10px 24px rgba(178,116,80,0.26);
+}
+
+.btn.ghost {
+  background: var(--paper-2);
+  color: var(--ink);
+  border-color: var(--hair-2);
+  box-shadow: none;
+}
+
+.btn.ghost:hover {
+  background: var(--paper-3);
+  color: var(--ink);
+  box-shadow: none;
+  transform: translateY(-1px);
+}
+
+.btn.ink {
+  background: var(--ink);
+  border-color: var(--ink);
+}
+
+.btn.ink:hover {
+  background: var(--ink-2);
+}
+
+.btn.sm {
+  height: 36px;
+  padding: 0 14px;
+  font-size: 12px;
+}
+
+.btn.lg {
+  height: 54px;
+  padding: 0 28px;
+  font-size: 14px;
+}
+
+.btn.block {
+  width: 100%;
+}
+
+/* Input styling */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field label {
+  font: 500 11px var(--mono);
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+
+.field input,
+.field textarea,
+.field select {
+  height: 50px;
+  padding: 0 16px;
+  background: var(--paper-2);
+  border: 1px solid var(--hair-2);
+  border-radius: var(--r-3);
+  font: 400 14px var(--sans);
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 4px var(--brand-glow);
+}
+
+.field.error input {
+  border-color: var(--alert);
+}
+
+.field .hint {
+  font: 400 11px var(--mono);
+  color: var(--mute-2);
+}
+
+.field .hint.err {
+  color: var(--alert);
+}
+
+/* Card / panel styling */
+.panel {
+  background: var(--paper-2);
+  padding: var(--pad-3);
+  border-radius: var(--r-3);
+  box-shadow: var(--sh-card);
+  border: 1px solid rgba(46,60,76,0.04);
+}
+
+.panel.tight {
+  padding: var(--pad-2);
+}
+
+.panel.fat {
+  padding: var(--pad-4);
+}
+
+.panel.flat {
+  box-shadow: none;
+  border: 1px solid var(--hair);
+}
+
+/* Tag / chip styling */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 10px;
+  border: 1px solid var(--hair-2);
+  border-radius: var(--r-pill);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  background: var(--paper-2);
+  font-weight: 500;
+}
+
+.tag.brand {
+  color: var(--brand);
+  border-color: var(--brand-rule);
+  background: var(--brand-tint);
+}
+
+.tag.signal {
+  color: var(--mint);
+  border-color: rgba(77,160,136,0.4);
+  background: var(--mint-tint);
+}
+
+/* Icon chip styling */
+.icon-chip {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--brand-tint);
+  color: var(--brand);
+  flex-shrink: 0;
+}
+
+.icon-chip.mint {
+  background: var(--mint-tint);
+  color: var(--mint);
+}
+
+.icon-chip.lavender {
+  background: var(--lavender-tint);
+  color: var(--lavender);
+}
+
+.icon-chip.sky {
+  background: var(--sky-tint);
+  color: var(--sky);
+}
+
+.icon-chip.coral {
+  background: var(--coral-tint);
+  color: var(--coral);
+}
