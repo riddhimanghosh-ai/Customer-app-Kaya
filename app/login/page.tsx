@@ -38,7 +38,7 @@ const LoginForm = ({
         />
         {showEmailErr
           ? <div className="hint err">· Enter a valid email address</div>
-          : (emailValid && <div className="hint" style={{ color: 'var(--mint)' }}>✓ Registered account found</div>)
+          : (emailValid && <div className="hint" style={{ color: 'var(--ok)' }}>Registered account found</div>)
         }
       </div>
 
@@ -116,8 +116,8 @@ export default function LoginPage() {
         {/* Brand header */}
         <div style={{
           padding: '40px 24px 24px',
-          background: 'linear-gradient(160deg, var(--brand-tint-2) 0%, transparent 70%)',
-          borderBottom: '1px solid var(--hair)',
+          background: 'var(--paper-2)',
+          borderBottom: '1px solid var(--rule)',
         }}>
           <div style={{ fontFamily: 'var(--serif)', fontSize: 28, fontWeight: 500, lineHeight: 1, letterSpacing: '-0.02em' }}>
             kaya<span style={{ color: 'var(--brand)' }}>.</span>
@@ -127,11 +127,11 @@ export default function LoginPage() {
           </div>
           <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
             {[
-              { v: '−34%', s: 'pigment · 9w', bg: 'var(--brand-tint-2)' },
-              { v: '94%',  s: 'compliance',   bg: '#eaf5ef' },
-              { v: 'Gold', s: '2,840 pts',    bg: '#fff8ee' },
+              { v: '−34%', s: 'pigment · 9w' },
+              { v: '94%',  s: 'compliance' },
+              { v: 'Gold', s: '2,840 pts' },
             ].map((stat, i) => (
-              <div key={i} style={{ flex: 1, padding: '10px 10px 8px', background: stat.bg, borderRadius: 10, border: '1px solid var(--hair)' }}>
+              <div key={i} style={{ flex: 1, padding: '10px 10px 8px', background: 'var(--paper-3)', borderRadius: 0, border: '1px solid var(--rule)' }}>
                 <div style={{ fontSize: 15, fontWeight: 700, letterSpacing: '-0.02em' }}>{stat.v}</div>
                 <div style={{ fontSize: 10, color: 'var(--mute)', marginTop: 2 }}>{stat.s}</div>
               </div>
@@ -150,9 +150,7 @@ export default function LoginPage() {
           {/* Left editorial */}
           <div style={{
             flex: 1.1, padding: '48px 56px',
-            background: `radial-gradient(800px 600px at 80% 20%, var(--brand-tint-2) 0%, transparent 50%),
-              radial-gradient(700px 500px at 10% 90%, var(--lavender-tint) 0%, transparent 60%),
-              var(--paper-grad)`,
+            background: 'var(--paper-2)',
             display: 'flex', flexDirection: 'column', overflow: 'hidden',
           }}>
             <div style={{ fontFamily: 'var(--serif)', fontSize: 32, fontWeight: 500, letterSpacing: '-0.02em' }}>

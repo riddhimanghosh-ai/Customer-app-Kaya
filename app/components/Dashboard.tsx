@@ -498,14 +498,14 @@ const DashboardMobile = () => {
   ];
 
   const reminders = [
-    { text: 'No retinoids 48h before Sat 31 session', hi: true, icon: '⚠️' },
-    { text: 'Photo log overdue · last upload 9 days ago', hi: false, icon: '📸' },
+    { text: 'No retinoids 48h before Sat 31 session', hi: true },
+    { text: 'Photo log overdue · last upload 9 days ago', hi: false },
   ];
 
   const offers = [
-    { title: '20% off Hydrafacial', subtitle: 'Book before June 30 · Save ₹800', tag: 'MEMBER', color: '#f0e2d4' },
-    { title: 'Free skin analysis', subtitle: 'With any treatment in June', tag: 'LIMITED', color: '#d4ecd5' },
-    { title: 'Refer & earn ₹500', subtitle: 'For every friend who completes a booking', tag: 'REFERRAL', color: '#d5dff0' },
+    { title: '20% off Hydrafacial', subtitle: 'Book before June 30 · Save ₹800', tag: 'MEMBER' },
+    { title: 'Free skin analysis', subtitle: 'With any treatment in June', tag: 'LIMITED' },
+    { title: 'Refer & earn ₹500', subtitle: 'For every friend who completes a booking', tag: 'REFERRAL' },
   ];
 
   return (
@@ -514,7 +514,7 @@ const DashboardMobile = () => {
 
         {/* Profile Header */}
         <div style={{
-          background: 'linear-gradient(135deg, #7a3b28 0%, #a0522d 50%, #6b3520 100%)',
+          background: 'var(--ink)',
           padding: '18px 20px 0',
           color: 'white',
         }}>
@@ -522,11 +522,12 @@ const DashboardMobile = () => {
             <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
               <div style={{
                 width: 46, height: 46,
-                background: 'radial-gradient(circle at 35% 30%, #e6c9a8, #6b4628)',
-                borderRadius: '50%',
+                background: 'var(--paper-3)',
+                color: 'var(--ink)',
+                border: '1px solid var(--rule)',
+                borderRadius: '0',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontFamily: 'var(--mono)', fontSize: 13, fontWeight: 600,
-                border: '2px solid rgba(255,255,255,0.25)',
                 flexShrink: 0,
               }}>PR</div>
               <div>
@@ -535,14 +536,14 @@ const DashboardMobile = () => {
               </div>
             </div>
             <div style={{
-              background: '#C9A84C',
+              background: 'var(--accent)',
               fontSize: 9, fontWeight: 700, letterSpacing: '0.07em',
-              padding: '4px 10px', borderRadius: 20, marginTop: 2,
+              padding: '4px 10px', borderRadius: 999, marginTop: 2,
             }}>GOLD</div>
           </div>
           <div style={{ display: 'flex', gap: 14, marginTop: 12, paddingBottom: 14, fontSize: 10, color: 'rgba(255,255,255,0.75)', flexWrap: 'wrap' }}>
-            <span>📞 +91 98XX XXXX 21</span>
-            <span>📍 Bandra West, Mumbai</span>
+            <span>+91 98XX XXXX 21</span>
+            <span>Bandra West, Mumbai</span>
           </div>
         </div>
 
@@ -592,31 +593,33 @@ const DashboardMobile = () => {
 
           {activeTab === 'overview' && <>
             <div style={{ marginBottom: 14 }}>
-              <div style={{ fontSize: 21, fontWeight: 600, letterSpacing: '-0.01em' }}>Hi Priya 👋</div>
+              <div style={{ fontSize: 21, fontWeight: 600, letterSpacing: '-0.01em' }}>Hi Priya</div>
               <div style={{ fontSize: 12, color: 'var(--mute)', marginTop: 2 }}>27 May · Wednesday</div>
             </div>
 
             {/* Next appointment */}
-            <div className="panel" style={{ padding: 16, background: 'linear-gradient(135deg, var(--brand) 0%, var(--brand-deep) 100%)', color: 'white', borderColor: 'transparent' }}>
-              <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.7)', fontWeight: 600, letterSpacing: '0.06em' }}>NEXT VISIT · IN 4 DAYS</div>
+            <div className="panel" style={{ padding: 16, background: 'var(--ink)', color: 'white', borderColor: 'var(--ink)' }}>
+              <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.7)', fontWeight: 600, letterSpacing: '0.06em', fontFamily: 'var(--mono)' }}>NEXT VISIT · IN 4 DAYS</div>
               <div style={{ color: 'white', marginTop: 6, fontSize: 15, fontWeight: 600 }}>Dr. Ananya Sharma</div>
               <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: 11, marginTop: 2 }}>Hydrafacial · Phase 2 · Bandra West</div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 12 }}>
                 <div className="num" style={{ fontSize: 20, letterSpacing: '-0.02em' }}>Sat 31 · 11:30</div>
-                <button className="btn sm" style={{ background: 'white', borderColor: 'white', color: 'var(--brand)', boxShadow: 'none' }}>Confirm</button>
+                <button className="btn sm" style={{ background: 'var(--paper)', borderColor: 'var(--rule)', color: 'var(--ink)', boxShadow: 'none' }}>Confirm</button>
               </div>
             </div>
 
             {/* Quick Action Cards */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 12 }}>
               {[
-                { icon: '📋', label: 'Session History', sub: '9 sessions total', action: () => router.push('/sessions') },
-                { icon: '📄', label: 'Summary', sub: 'Session summaries', action: () => router.push('/summary') },
-                { icon: '💊', label: 'My Rx', sub: '6 items active', action: () => router.push('/prescriptions') },
-                { icon: '🏅', label: 'Loyalty', sub: 'Gold · 2,840 pts', action: () => router.push('/loyalty') },
+                { Icon: IconAppt, label: 'Session History', sub: '9 sessions total', action: () => router.push('/sessions') },
+                { Icon: IconSummary, label: 'Summary', sub: 'Session summaries', action: () => router.push('/summary') },
+                { Icon: IconMed, label: 'My Rx', sub: '6 items active', action: () => router.push('/prescriptions') },
+                { Icon: IconRewards, label: 'Loyalty', sub: 'Gold · 2,840 pts', action: () => router.push('/loyalty') },
               ].map((card, i) => (
                 <div key={i} className="panel" onClick={card.action} style={{ padding: 14, cursor: 'pointer' }}>
-                  <div style={{ fontSize: 22, marginBottom: 8 }}>{card.icon}</div>
+                  <div style={{ width: 32, height: 32, border: '1px solid var(--rule)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
+                    <card.Icon size={16} stroke={1.4} />
+                  </div>
                   <div style={{ fontSize: 13, fontWeight: 600 }}>{card.label}</div>
                   <div style={{ fontSize: 10, color: 'var(--mute)', marginTop: 3 }}>{card.sub}</div>
                 </div>
@@ -634,11 +637,10 @@ const DashboardMobile = () => {
                   <div key={i} style={{
                     display: 'flex', alignItems: 'flex-start', gap: 10,
                     padding: '10px 12px',
-                    background: r.hi ? 'rgba(201,168,76,0.08)' : 'var(--paper-2)',
-                    borderRadius: 'var(--r-3)',
-                    borderLeft: `3px solid ${r.hi ? 'var(--gold)' : 'var(--hair-strong)'}`,
+                    background: r.hi ? 'var(--accent-soft)' : 'var(--paper-2)',
+                    borderRadius: 0,
+                    borderLeft: `3px solid ${r.hi ? 'var(--accent)' : 'var(--hair-strong)'}`,
                   }}>
-                    <span style={{ fontSize: 14 }}>{r.icon}</span>
                     <div style={{ fontSize: 12, lineHeight: 1.4 }}>{r.text}</div>
                   </div>
                 ))}
@@ -799,9 +801,9 @@ const DashboardMobile = () => {
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {offers.map((o, i) => (
-                <div key={i} style={{ borderRadius: 'var(--r-4)', overflow: 'hidden', border: '1px solid var(--hair)' }}>
-                  <div style={{ background: o.color, padding: '18px 16px' }}>
-                    <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.06em', background: 'rgba(255,255,255,0.7)', padding: '2px 8px', borderRadius: 10 }}>{o.tag}</span>
+                <div key={i} style={{ overflow: 'hidden', border: '1px solid var(--rule)' }}>
+                  <div style={{ background: 'var(--paper-3)', padding: '18px 16px' }}>
+                    <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.06em', fontFamily: 'var(--mono)', background: 'var(--paper-2)', padding: '2px 8px', border: '1px solid var(--rule)' }}>{o.tag}</span>
                     <div style={{ fontSize: 16, fontWeight: 700, marginTop: 10, letterSpacing: '-0.01em' }}>{o.title}</div>
                     <div style={{ fontSize: 12, color: 'var(--mute)', marginTop: 4 }}>{o.subtitle}</div>
                   </div>

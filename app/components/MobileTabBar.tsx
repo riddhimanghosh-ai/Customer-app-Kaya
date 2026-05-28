@@ -26,12 +26,12 @@ const IconX       = () => <Ico><path d="M18 6 L6 18 M6 6 L18 18"/></Ico>;
 const IconLogout  = () => <Ico><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></Ico>;
 
 const MORE_ITEMS = [
-  { icon: <IconSum/>,     label: 'Summaries',  path: '/summary',     color: '#fff8ee' },
-  { icon: <IconRewards/>, label: 'Loyalty',    path: '/loyalty',     color: '#fff8ee' },
-  { icon: <IconRefer/>,   label: 'Referrals',  path: '/referral',    color: '#eef4ff' },
-  { icon: <IconPkg/>,     label: 'Products',   path: '/products',    color: '#f0faf2' },
-  { icon: <IconBlog/>,    label: 'Articles',   path: '/blog',        color: '#f5f0ff' },
-  { icon: <IconVideo/>,   label: 'Videos',     path: '/videos',      color: '#fff0f5' },
+  { icon: <IconSum/>,     label: 'Summaries',  path: '/summary' },
+  { icon: <IconRewards/>, label: 'Loyalty',    path: '/loyalty' },
+  { icon: <IconRefer/>,   label: 'Referrals',  path: '/referral' },
+  { icon: <IconPkg/>,     label: 'Products',   path: '/products' },
+  { icon: <IconBlog/>,    label: 'Articles',   path: '/blog' },
+  { icon: <IconVideo/>,   label: 'Videos',     path: '/videos' },
 ];
 
 export default function MobileTabBar({ active = 'home' }: { active?: string }) {
@@ -56,14 +56,14 @@ export default function MobileTabBar({ active = 'home' }: { active?: string }) {
             onClick={e => e.stopPropagation()}
             style={{
               background: 'var(--paper)',
-              borderRadius: '20px 20px 0 0',
+              borderRadius: 0,
               padding: '0 0 32px',
-              boxShadow: '0 -8px 40px rgba(0,0,0,0.15)',
+              borderTop: '1px solid var(--rule)',
             }}
           >
             {/* Handle */}
             <div style={{ display: 'flex', justifyContent: 'center', padding: '12px 0 4px' }}>
-              <div style={{ width: 36, height: 4, borderRadius: 2, background: 'var(--hair-2)' }}/>
+              <div style={{ width: 36, height: 4, borderRadius: 0, background: 'var(--rule)' }}/>
             </div>
 
             {/* Header */}
@@ -79,11 +79,11 @@ export default function MobileTabBar({ active = 'home' }: { active?: string }) {
               {MORE_ITEMS.map(item => (
                 <button key={item.path} onClick={() => { setShowMore(false); router.push(item.path); }} style={{
                   display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
-                  padding: '16px 8px', background: item.color,
-                  border: '1px solid var(--hair)', borderRadius: 14,
+                  padding: '16px 8px', background: 'var(--paper-3)',
+                  border: '1px solid var(--rule)', borderRadius: 0,
                   cursor: 'pointer', color: 'var(--ink)',
                 }}>
-                  <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(255,255,255,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ width: 40, height: 40, borderRadius: 0, background: 'var(--paper-2)', border: '1px solid var(--rule)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     {item.icon}
                   </div>
                   <span style={{ fontSize: 12, fontWeight: 600 }}>{item.label}</span>
@@ -95,11 +95,11 @@ export default function MobileTabBar({ active = 'home' }: { active?: string }) {
             <div style={{ padding: '16px 16px 0' }}>
               <button onClick={handleLogout} style={{
                 width: '100%', display: 'flex', alignItems: 'center', gap: 12,
-                padding: '14px 16px', background: '#fff5f5',
-                border: '1px solid #fdd', borderRadius: 14,
-                cursor: 'pointer', color: '#c0392b',
+                padding: '14px 16px', background: 'var(--accent-soft)',
+                border: '1px solid var(--rule)', borderRadius: 0,
+                cursor: 'pointer', color: 'var(--warn)',
               }}>
-                <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(255,255,255,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: 40, height: 40, borderRadius: 0, background: 'var(--paper-2)', border: '1px solid var(--rule)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <IconLogout/>
                 </div>
                 <span style={{ fontSize: 14, fontWeight: 600 }}>Sign out</span>

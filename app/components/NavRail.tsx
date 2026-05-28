@@ -81,9 +81,12 @@ export default function NavRail({ active = 'dashboard' }: { active?: string }) {
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
           <div style={{
             width: 32, height: 32,
-            background: 'radial-gradient(circle at 35% 30%, #e6c9a8, #6b4628)',
-            borderRadius: '50%', display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
-            color: 'rgba(255,255,255,0.85)', fontFamily: 'var(--mono)', fontSize: 9, paddingBottom: 4,
+            background: 'var(--paper-3)',
+            border: '1px solid var(--rule)',
+            color: 'var(--muted)',
+            borderRadius: '0',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontFamily: 'var(--mono)', fontSize: 9,
           }}>PR</div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontSize: 13, fontWeight: 500 }}>Priya R.</div>
@@ -97,7 +100,7 @@ export default function NavRail({ active = 'dashboard' }: { active?: string }) {
             title="Sign out"
             style={{
               background: 'none', border: 'none', cursor: 'pointer',
-              padding: 6, borderRadius: 6, color: 'var(--mute)',
+              padding: 6, borderRadius: 0, color: 'var(--muted)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               transition: 'color 0.15s, background 0.15s',
             }}
