@@ -212,6 +212,8 @@ const PAST_MEDS = [
 ];
 
 const PrescriptionsDesktop = () => {
+  const adhColor = (pct: number) => pct >= 90 ? 'var(--ok)' : pct >= 75 ? '#CA8A04' : 'var(--warn)';
+
   return (
     <div className="frame" style={{ display: 'flex' }}>
       <NavRail active="medications" />
@@ -222,114 +224,110 @@ const PrescriptionsDesktop = () => {
           right={<button className="btn ghost sm"><IconDoc size={14} /> Download Rx</button>}
         />
 
-        {/* Stat band */}
-        <div className="row" style={{ padding: 'var(--pad-4)', borderBottom: '1px solid var(--hair)' }}>
-          <div style={{ flex: 1 }}><Stat label="Active meds" value="5" /></div>
-          <div style={{ width: 1, background: 'var(--hair)' }} />
-          <div style={{ flex: 1, paddingLeft: 24 }}><Stat label="14-day adherence" value="94" suffix="%" sub="last reading: today 14:00" /></div>
-          <div style={{ width: 1, background: 'var(--hair)' }} />
-          <div style={{ flex: 1, paddingLeft: 24 }}><Stat label="Refills · 30 days" value="2" sub="Tretinoin · Azelaic" /></div>
-          <div style={{ width: 1, background: 'var(--hair)' }} />
-          <div style={{ flex: 1, paddingLeft: 24 }}>
-            <Stat label="Next dose" value="21:00" sub="Azelaic acid · PM" />
-          </div>
+        {/* ── Stat band ── */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', borderBottom: '1px solid var(--hair)' }}>
+          {[
+            { label: 'Active meds',      value: '5',     sub: '5 products in regimen',        color: 'var(--ink)' },
+            { label: '14-day adherence', value: '94%',   sub: 'Last reading: today 14:00',     color: 'var(--ok)' },
+            { label: 'Refills needed',   value: '3',     sub: 'Tretinoin · Azelaic · SPF',     color: 'var(--warn)' },
+            { label: 'Next dose',        value: '21:00', sub: 'Azelaic acid · PM application', color: 'var(--ink)' },
+          ].map((s, i) => (
+            <div key={i} style={{ padding: '20px 24px', borderRight: i < 3 ? '1px solid var(--hair)' : 'none' }}>
+              <div style={{ fontSize: 11, fontFamily: 'var(--mono)', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--mute)', marginBottom: 8 }}>{s.label}</div>
+              <div style={{ fontSize: 30, fontWeight: 600, letterSpacing: '-0.03em', color: s.color, fontFamily: 'var(--mono)' }}>{s.value}</div>
+              <div style={{ fontSize: 11, color: 'var(--mute)', marginTop: 4 }}>{s.sub}</div>
+            </div>
+          ))}
         </div>
 
-        <div style={{ flex: 1, padding: 'var(--pad-4)', overflow: 'auto' }}>
-          <div className="eyebrow">Active regimen · 5 medications</div>
+        <div style={{ flex: 1, padding: '28px 32px 48px', overflow: 'auto' }}>
 
-          <div style={{ marginTop: 16, border: '1px solid var(--hair)' }}>
-            {/* table header */}
-            <div className="row" style={{ padding: '10px 16px', borderBottom: '1px solid var(--hair)', background: 'var(--paper-2)' }}>
-              {['Medication', 'Schedule', 'Started', 'Adherence', 'Refill', 'Actions'].map((c, i) => (
-                <div key={c} className="eyebrow" style={{
-                  flex: i === 0 ? 2 : i === 5 ? 1.2 : 1,
-                  fontSize: 9,
-                }}>{c}</div>
-              ))}
+          {/* ── Active regimen cards ── */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+            <div>
+              <div style={{ fontSize: 16, fontWeight: 600 }}>Active regimen</div>
+              <div style={{ fontSize: 12, color: 'var(--mute)', marginTop: 2 }}>5 medications · prescribed by Dr. Ananya Sharma</div>
             </div>
-            {MEDS.map((m, i) => (
-              <div key={i} className="row center" style={{
-                padding: '16px',
-                borderBottom: i < MEDS.length - 1 ? '1px solid var(--hair)' : 0,
-              }}>
-                <div style={{ flex: 2 }}>
-                  <div className="row center" style={{ gap: 12 }}>
-                    <div style={{
-                      width: 36, height: 36, background: 'var(--paper-2)', border: '1px solid var(--hair-2)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    }}><IconMed size={18} /></div>
-                    <div>
-                      <div style={{ fontSize: 14, fontWeight: 500 }}>
-                        {m.name} <span className="muted">· {m.dose}</span>
-                      </div>
-                      <div className="muted" style={{ fontSize: 11 }}>{m.form} · {m.qty}</div>
-                    </div>
-                  </div>
-                </div>
-                <div style={{ flex: 1, fontSize: 12 }}>{m.sched}</div>
-                <div style={{ flex: 1 }} className="num muted">{m.start}</div>
-                <div style={{ flex: 1 }}>
-                  <div className="row center" style={{ gap: 8 }}>
-                    <div style={{ flex: 1, maxWidth: 80 }}><AnimatedMeter pct={m.adh} gold={m.adh >= 90} /></div>
-                    <div className="num" style={{ fontSize: 12, fontWeight: 500, width: 30 }}>{m.adh}%</div>
-                  </div>
-                </div>
-                <div style={{ flex: 1 }}>
-                  <div className="num" style={{ fontSize: 13 }}>{m.daysLeft} <span className="muted" style={{ fontSize: 11 }}>/ {m.total} days</span></div>
-                  {m.daysLeft < 15 && <div className="tag alert" style={{ marginTop: 4 }}><span style={{ display: 'inline-block', width: 6, height: 6, background: 'var(--alert)', borderRadius: '50%', marginRight: 4 }} /> low</div>}
-                </div>
-                <div style={{ flex: 1.2 }} className="row" >
-                  <button className="btn ghost sm" style={{ padding: '0 10px' }}>Log dose</button>
-                  {m.daysLeft < 15 && <button className="btn sm" style={{ padding: '0 10px', marginLeft: 6 }}>Refill</button>}
-                </div>
-              </div>
-            ))}
           </div>
 
-          {/* Today's compliance row */}
-          <div className="row" style={{ marginTop: 28, gap: 24 }}>
-            <div style={{ flex: 1 }}>
-              <div className="eyebrow">14-day adherence by med</div>
-              <div className="col" style={{ marginTop: 14, gap: 14 }}>
-                {MEDS.map((m, i) => (
-                  <div key={i}>
-                    <div className="row between" style={{ marginBottom: 4 }}>
-                      <span style={{ fontSize: 12 }}>{m.name}</span>
-                      <span className="num" style={{ fontSize: 11, color: 'var(--mute)' }}>{m.adh}%</span>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
+            {MEDS.map((m, i) => {
+              const isLow = m.daysLeft < 15;
+              const pct = (m.daysLeft / m.total) * 100;
+              return (
+                <div key={i} style={{
+                  border: '1px solid ' + (isLow ? 'rgba(192,57,43,0.3)' : 'var(--hair)'),
+                  background: isLow ? '#FEF9F9' : 'var(--paper)',
+                  padding: '18px 20px',
+                  display: 'flex', flexDirection: 'column', gap: 0,
+                }}>
+                  {/* Top row: name + LOW badge */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 }}>
+                    <div style={{ fontSize: 14, fontWeight: 600, lineHeight: 1.3, flex: 1 }}>{m.name}</div>
+                    {isLow && (
+                      <span style={{ background: '#FEE2E2', color: 'var(--warn)', fontSize: 10, fontWeight: 700, fontFamily: 'var(--mono)', letterSpacing: '0.08em', padding: '3px 8px', flexShrink: 0, marginLeft: 8 }}>LOW</span>
+                    )}
+                  </div>
+                  <div style={{ fontSize: 11, color: 'var(--mute)', marginBottom: 14 }}>{m.form} · {m.qty} · started {m.start}</div>
+
+                  {/* Schedule */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', background: 'var(--paper-2)', marginBottom: 14 }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--mute)" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span style={{ fontSize: 12, fontWeight: 500 }}>{m.sched}</span>
+                  </div>
+
+                  {/* Adherence */}
+                  <div style={{ marginBottom: 12 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                      <span style={{ fontSize: 11, color: 'var(--mute)', fontFamily: 'var(--mono)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>Adherence</span>
+                      <span style={{ fontSize: 16, fontWeight: 700, color: adhColor(m.adh), fontFamily: 'var(--mono)' }}>{m.adh}%</span>
                     </div>
-                    <div className="row" style={{ height: 18, gap: 2 }}>
-                      {Array.from({ length: 14 }).map((_, d) => {
-                        const taken = (d * 7 + i * 3) % 11 !== (i + 2) && d > 0;
-                        return <div key={d} style={{
-                          height: taken ? '100%' : '30%',
-                          background: taken ? (i === 0 ? 'var(--gold)' : 'var(--ink)') : 'var(--hair-2)',
-                          flex: 1,
-                        }} />;
-                      })}
+                    <div style={{ height: 5, background: 'var(--hair-2)', borderRadius: 2 }}>
+                      <div style={{ height: '100%', width: `${m.adh}%`, background: adhColor(m.adh), borderRadius: 2, transition: 'width 1s ease' }} />
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
-            <div style={{ flex: 1 }}>
-              <div className="eyebrow">Past medications</div>
-              <div className="col" style={{ marginTop: 14 }}>
-                {PAST_MEDS.map((p, i) => (
-                  <div key={i} className="row between center" style={{
-                    padding: '14px 0', borderBottom: '1px solid var(--hair)',
-                  }}>
-                    <div>
-                      <div style={{ fontSize: 13, fontWeight: 500 }}>{p.name} <span className="muted">· {p.dose}</span></div>
-                      <div className="muted" style={{ fontSize: 11 }}>{p.period}</div>
+
+                  {/* Supply */}
+                  <div style={{ marginBottom: 16 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                      <span style={{ fontSize: 11, color: 'var(--mute)', fontFamily: 'var(--mono)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>Supply</span>
+                      <span style={{ fontSize: 12, fontFamily: 'var(--mono)', color: isLow ? 'var(--warn)' : 'var(--ink)', fontWeight: 600 }}>{m.daysLeft} <span style={{ fontWeight: 400, color: 'var(--mute)' }}>/ {m.total} days</span></span>
                     </div>
-                    <div style={{ textAlign: 'right' }}>
-                      <div className="num" style={{ fontSize: 13 }}>{p.adh}%</div>
-                      <div className="eyebrow" style={{ fontSize: 9 }}>{p.reason}</div>
+                    <div style={{ height: 5, background: 'var(--hair-2)', borderRadius: 2 }}>
+                      <div style={{ height: '100%', width: `${pct}%`, background: isLow ? 'var(--warn)' : 'var(--ok)', borderRadius: 2, transition: 'width 1s ease' }} />
                     </div>
                   </div>
-                ))}
-              </div>
+
+                  {/* Actions */}
+                  <div style={{ display: 'flex', gap: 8, marginTop: 'auto' }}>
+                    <button className="btn ghost sm" style={{ flex: 1 }}>Log dose</button>
+                    {isLow && <button className="btn sm" style={{ flex: 1 }}>Refill now</button>}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* ── Past medications ── */}
+          <div style={{ marginTop: 36 }}>
+            <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 4 }}>Past medications</div>
+            <div style={{ fontSize: 12, color: 'var(--mute)', marginBottom: 16 }}>Completed or discontinued</div>
+            <div style={{ border: '1px solid var(--hair)' }}>
+              {PAST_MEDS.map((p, i) => (
+                <div key={i} style={{
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                  padding: '14px 18px', borderBottom: i < PAST_MEDS.length - 1 ? '1px solid var(--hair)' : 'none',
+                }}>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 500 }}>{p.name} <span style={{ color: 'var(--mute)', fontWeight: 400 }}>· {p.dose}</span></div>
+                    <div style={{ fontSize: 11, color: 'var(--mute)', marginTop: 2 }}>{p.period}</div>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: 14, fontWeight: 600, fontFamily: 'var(--mono)', color: adhColor(p.adh) }}>{p.adh}%</div>
+                    <div style={{ fontSize: 10, color: 'var(--mute)', marginTop: 2, fontFamily: 'var(--mono)', letterSpacing: '0.04em' }}>{p.reason}</div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>

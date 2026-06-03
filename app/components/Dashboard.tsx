@@ -276,186 +276,169 @@ const MobileShell = ({ active = 'home', children, dark }: any) => {
 };
 
 const DashboardDesktop = () => {
-  const today = "Wed · 27 May";
-
-  const phases = [
-    { p: 'Phase 1', s: 'Consultation + skin map', d: 'Mar 14', done: true },
-    { p: 'Phase 2', s: 'Chemical peel · 3 sessions', d: 'Apr 2 – Apr 30', done: true },
-    { p: 'Phase 3', s: 'Hydrafacial · 4 sessions', d: 'May 7 – Jun 6', done: false, current: true },
-    { p: 'Phase 4', s: 'Maintenance review', d: 'Jun 18', done: false }
-  ];
-
-  const meds = [
+  const [activeTab, setActiveTab] = useState('overview');
+  const [meds, setMeds] = useState([
     { t: 'Tretinoin 0.025%', sub: 'PM · pea-sized', taken: true, time: '08:00' },
     { t: 'Vitamin C serum', sub: 'AM · 3 drops', taken: true, time: '08:05' },
     { t: 'Niacinamide 10%', sub: 'AM + PM', taken: true, time: '12:30' },
     { t: 'SPF 50 PA++++', sub: 'reapply 2h', taken: true, time: '14:00' },
     { t: 'Azelaic acid 15%', sub: 'PM · spot', taken: false, time: '21:00', up: true },
     { t: 'Moisturizer ceramide', sub: 'PM', taken: false, time: '22:00' }
+  ]);
+  const toggleMedDesktop = (i: number) => setMeds(m => m.map((x, j) => j === i ? { ...x, taken: !x.taken } : x));
+
+  const pageTabs = [
+    { id: 'overview', label: 'Overview' },
+    { id: 'sessions', label: 'Sessions' },
+    { id: 'progress', label: 'Progress' },
+    { id: 'rx', label: 'Rx' },
+    { id: 'offers', label: 'Offers' },
+    { id: 'purchases', label: 'Purchases' },
+  ];
+
+  const quickLinks = [
+    { icon: <IconAppt size={22} />, title: 'Session History', sub: '9 sessions total' },
+    { icon: <IconSummary size={22} />, title: 'Summary', sub: 'Session summaries' },
+    { icon: <IconMed size={22} />, title: 'My Rx', sub: '6 items active' },
+    { icon: <IconRewards size={22} />, title: 'Loyalty', sub: 'Gold · 2,840 pts' },
   ];
 
   return (
     <div className="frame" style={{ display: 'flex' }}>
       <NavRail active="dashboard" />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        <Topbar
-          subtitle={`Good afternoon · ${today}`}
-          title="Priya, your skin is on schedule."
-          right={<div className="tag signal"><span className="led pulse" /> Plan active</div>}
-        />
 
-        <div className="row" style={{ padding: 'var(--pad-4) var(--pad-4) 0', gap: 0 }}>
-          <div style={{ flex: 1.2, paddingRight: 32, borderRight: '1px solid var(--hair)' }}>
-            <div className="eyebrow">Ongoing care · Mar 14 – Jun 18</div>
-            <div className="display h2" style={{ marginTop: 12 }}>
-              9 sessions completed.<br />
-              Regimen <em>94% compliant</em>. Review in <em>3 weeks</em>.
-            </div>
-            <div className="row" style={{ marginTop: 22, gap: 24 }}>
-              <Stat label="Sessions done" value={<AnimatedNum value={9} />} suffix="/ 12" />
-              <div className="vr" style={{ height: 56, alignSelf: 'center' }} />
-              <Stat label="Compliance" value={<AnimatedNum value={94} />} suffix="%" />
-              <div className="vr" style={{ height: 56, alignSelf: 'center' }} />
-              <Stat label="Next review" value="14d" />
-            </div>
-          </div>
-          <div style={{ flex: 1, paddingLeft: 32 }}>
-            <div className="eyebrow gold dot">Next visit</div>
-            <div className="h3" style={{ marginTop: 12 }}>Dr. Ananya Sharma</div>
-            <div className="muted" style={{ marginTop: 4 }}>Hydrafacial · Phase 2 follow-up</div>
-            <div className="row between center" style={{ marginTop: 16 }}>
+        {/* ── Dark profile header ── */}
+        <div style={{ background: 'var(--ink)', color: 'var(--paper)', padding: '24px 32px 0', flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              <div style={{ width: 52, height: 52, background: 'var(--paper)', color: 'var(--ink)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 15, fontFamily: 'var(--mono)', flexShrink: 0 }}>PR</div>
               <div>
-                <div className="num" style={{ fontSize: 30, lineHeight: 1, fontWeight: 400, letterSpacing: '-0.03em' }}>
-                  Sat 31 / 11:30
-                </div>
-                <div className="muted" style={{ fontSize: 12, marginTop: 6 }}>Bandra West clinic · Suite 04</div>
+                <div style={{ fontSize: 20, fontWeight: 600, letterSpacing: '-0.01em' }}>Priya R.</div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginTop: 3, fontFamily: 'var(--mono)', letterSpacing: '0.04em' }}>ID · 8842-G</div>
               </div>
-              <button className="btn sm">Confirm <span className="arrow" /></button>
             </div>
-            <div className="row" style={{ marginTop: 14, gap: 6 }}>
-              <span className="tag">in 4 days</span>
-              <span className="tag">30 min</span>
-              <span className="tag gold"><span className="led" /> Pre-visit checklist</span>
-            </div>
+            <div style={{ background: 'var(--brand)', color: 'white', fontFamily: 'var(--mono)', fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', padding: '5px 14px', borderRadius: 999 }}>GOLD</div>
+          </div>
+          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', fontFamily: 'var(--mono)', paddingBottom: 16 }}>+91 98XX XXXX 21 &nbsp;·&nbsp; Bandra West, Mumbai</div>
+
+          {/* Stats bar */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+            {[
+              { v: '9',   l: 'Sessions' },
+              { v: '2',   l: 'Packages' },
+              { v: '5',   l: 'Photos' },
+              { v: '94%', l: 'Compliance' },
+            ].map((s, i) => (
+              <div key={i} style={{ padding: '14px 0', textAlign: 'center', borderRight: i < 3 ? '1px solid rgba(255,255,255,0.08)' : 'none' }}>
+                <div style={{ fontSize: 22, fontWeight: 600, letterSpacing: '-0.02em' }}>{s.v}</div>
+                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.38)', marginTop: 3, fontFamily: 'var(--mono)', letterSpacing: '0.04em' }}>{s.l}</div>
+              </div>
+            ))}
           </div>
         </div>
 
-        <div className="hr" style={{ margin: '32px 0 0' }} />
+        {/* ── Tab bar ── */}
+        <div style={{ display: 'flex', borderBottom: '1px solid var(--hair)', background: 'var(--paper)', flexShrink: 0, overflowX: 'auto' }}>
+          {pageTabs.map(tab => (
+            <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
+              padding: '14px 22px', border: 'none', background: 'transparent', cursor: 'pointer',
+              borderBottom: activeTab === tab.id ? '2px solid var(--brand)' : '2px solid transparent',
+              color: activeTab === tab.id ? 'var(--brand)' : 'var(--mute)',
+              fontWeight: activeTab === tab.id ? 600 : 400,
+              fontSize: 14, fontFamily: 'var(--sans)', whiteSpace: 'nowrap', letterSpacing: '-0.005em',
+            }}>{tab.label}</button>
+          ))}
+        </div>
 
-        <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr', gap: 0, overflow: 'hidden' }}>
-          <div style={{ padding: 'var(--pad-4)', borderRight: '1px solid var(--hair)' }}>
-            <div className="row between center">
-              <div className="eyebrow">Treatment timeline</div>
-              <div className="muted" style={{ fontSize: 11 }}>Mar — Jun · 12 weeks</div>
-            </div>
-            <div style={{ marginTop: 14 }}>
-              <AnimatedMeter pct={75} gold />
-            </div>
-            <div className="row between" style={{ marginTop: 10, fontSize: 11, color: 'var(--mute)', fontFamily: 'var(--mono)' }}>
-              <span>W01</span><span>W04</span><span>W08</span><span style={{ color: 'var(--gold)' }}>● W09</span><span>W12</span>
+        {/* ── Scrollable content ── */}
+        <div style={{ flex: 1, overflowY: 'auto', padding: '28px 32px 48px' }}>
+
+          {activeTab === 'overview' && <>
+            {/* Greeting */}
+            <div style={{ fontSize: 34, fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1 }}>Hi Priya</div>
+            <div style={{ fontSize: 13, color: 'var(--mute)', marginTop: 6, fontFamily: 'var(--mono)' }}>27 May · Wednesday</div>
+
+            {/* Appointment card */}
+            <div style={{ background: 'var(--ink)', color: 'var(--paper)', padding: '20px 24px', marginTop: 20 }}>
+              <div style={{ fontSize: 10, fontFamily: 'var(--mono)', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.45)', marginBottom: 10 }}>NEXT VISIT · IN 4 DAYS</div>
+              <div style={{ fontSize: 18, fontWeight: 600 }}>Dr. Ananya Sharma</div>
+              <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.55)', marginTop: 4 }}>Hydrafacial · Phase 2 · Bandra West</div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 20 }}>
+                <div style={{ fontFamily: 'var(--mono)', fontSize: 28, fontWeight: 400, letterSpacing: '-0.02em' }}>Sat 31 · 11:30</div>
+                <button style={{ background: 'var(--paper)', color: 'var(--ink)', border: 'none', padding: '11px 22px', fontWeight: 600, fontSize: 13, cursor: 'pointer', fontFamily: 'var(--sans)', letterSpacing: '-0.005em' }}>Confirm</button>
+              </div>
             </div>
 
-            <div style={{ marginTop: 22 }} className="col">
-              {phases.map((x, i) => (
-                <div key={i} className="row" style={{ gap: 14, alignItems: 'flex-start' }}>
-                  <div style={{
-                    width: 18, height: 18, marginTop: 2, flexShrink: 0,
-                    border: '1px solid ' + (x.done ? 'var(--ink)' : x.current ? 'var(--gold)' : 'var(--hair-2)'),
-                    background: x.done ? 'var(--ink)' : x.current ? 'var(--gold)' : 'transparent',
-                    color: 'var(--paper)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center'
-                  }}>
-                    {x.done && <IconCheck size={12} />}
-                    {x.current && <span style={{ width: 6, height: 6, background: 'var(--paper)', borderRadius: '50%' }} />}
-                  </div>
-                  <div style={{ flex: 1, paddingBottom: 6, borderBottom: i < 3 ? '1px solid var(--hair)' : '0' }}>
-                    <div className="row between center">
-                      <div style={{ fontWeight: 500, fontSize: 13 }}>{x.p} · <span className="muted" style={{ fontWeight: 400 }}>{x.s}</span></div>
-                      <div className="num muted" style={{ fontSize: 11 }}>{x.d}</div>
-                    </div>
-                  </div>
+            {/* 2×2 quick-link grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginTop: 16 }}>
+              {quickLinks.map((card, i) => (
+                <div key={i} className="panel" style={{ padding: '18px 20px', cursor: 'pointer' }}>
+                  <div style={{ color: 'var(--mute)', marginBottom: 12 }}>{card.icon}</div>
+                  <div style={{ fontSize: 15, fontWeight: 600 }}>{card.title}</div>
+                  <div style={{ fontSize: 12, color: 'var(--mute)', marginTop: 4 }}>{card.sub}</div>
                 </div>
               ))}
             </div>
-          </div>
 
-          <div style={{ padding: 'var(--pad-4)', borderRight: '1px solid var(--hair)' }}>
-            <div className="eyebrow">Today · regimen</div>
-            <div className="h4" style={{ marginTop: 8 }}>4 of 6 taken</div>
-            <div style={{ marginTop: 12 }}><AnimatedMeter pct={66} /></div>
+            {/* Reminders */}
+            <div style={{ marginTop: 20 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--brand)', display: 'inline-block' }} />
+                  <span style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--mute)' }}>Reminders</span>
+                </div>
+                <span style={{ fontSize: 12, color: 'var(--mute)' }}>2 active</span>
+              </div>
+              <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
+                {[
+                  { text: 'No retinoids 48h before Sat 31 session', accent: 'var(--brand)' },
+                  { text: 'Photo log overdue · last upload 9 days ago', accent: 'var(--hair-strong)' },
+                ].map((r, i) => (
+                  <div key={i} style={{
+                    padding: '14px 16px',
+                    borderBottom: i === 0 ? '1px solid var(--hair)' : 'none',
+                    borderLeft: '3px solid ' + r.accent,
+                    fontSize: 13,
+                  }}>{r.text}</div>
+                ))}
+              </div>
+            </div>
+          </>}
 
-            <div className="col" style={{ marginTop: 22, gap: 10 }}>
+          {activeTab === 'rx' && <>
+            <div style={{ fontSize: 22, fontWeight: 600, marginBottom: 16, letterSpacing: '-0.02em' }}>Today · Regimen</div>
+            <div style={{ fontSize: 13, color: 'var(--mute)', marginBottom: 16 }}>{meds.filter(m => m.taken).length} of {meds.length} taken</div>
+            <AnimatedMeter pct={(meds.filter(m => m.taken).length / meds.length) * 100} />
+            <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 0 }}>
               {meds.map((m, i) => (
-                <div key={i} className="row between center" style={{
-                  padding: '8px 10px',
-                  background: m.up ? 'var(--gold-tint)' : 'transparent',
-                  border: m.up ? '1px solid var(--gold-rule)' : '1px solid transparent',
-                  borderRadius: 2,
-                  margin: '0 -10px'
+                <div key={i} onClick={() => toggleMedDesktop(i)} style={{
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                  padding: '12px 0', borderBottom: i < meds.length - 1 ? '1px solid var(--hair)' : 'none', cursor: 'pointer',
                 }}>
-                  <div className="row center" style={{ gap: 10 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                     <div style={{
-                      width: 14, height: 14, borderRadius: 2,
+                      width: 16, height: 16, borderRadius: 2, flexShrink: 0,
                       border: '1px solid ' + (m.taken ? 'var(--ink)' : 'var(--hair-2)'),
                       background: m.taken ? 'var(--ink)' : 'transparent',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      color: 'var(--paper)'
-                    }}>{m.taken && <IconCheck size={9} />}</div>
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--paper)',
+                    }}>{m.taken && <IconCheck size={10} />}</div>
                     <div>
-                      <div style={{ fontSize: 12, fontWeight: 500, textDecoration: m.taken ? 'line-through' : 'none', color: m.taken ? 'var(--mute)' : 'var(--ink)' }}>{m.t}</div>
+                      <div style={{ fontSize: 13, fontWeight: 500, color: m.taken ? 'var(--mute)' : 'var(--ink)' }}>{m.t}</div>
                       <div style={{ fontSize: 11, color: 'var(--mute-2)' }}>{m.sub}</div>
                     </div>
                   </div>
-                  <div className="num" style={{ fontSize: 11, color: m.up ? 'var(--gold)' : 'var(--mute-2)' }}>{m.time}</div>
+                  <div style={{ fontSize: 11, fontFamily: 'var(--mono)', color: 'var(--mute-2)' }}>{m.time}</div>
                 </div>
               ))}
             </div>
-          </div>
+          </>}
 
-          <div style={{ padding: 'var(--pad-4)', display: 'flex', flexDirection: 'column', gap: 18 }}>
-            <div>
-              <div className="row between center">
-                <div className="eyebrow">Loyalty status</div>
-                <div className="tier-chip"><span className="swatch gold" /> Gold</div>
-              </div>
-              <div className="num" style={{ fontSize: 40, fontWeight: 400, letterSpacing: '-0.03em', marginTop: 8 }}>
-                <AnimatedNum value={2840} />
-                <span style={{ fontSize: 14, color: 'var(--mute)', marginLeft: 6 }}>pts</span>
-              </div>
-              <div className="muted" style={{ fontSize: 12, marginTop: 4 }}>660 to <span style={{ color: 'var(--ink)' }}>Elite</span></div>
-              <div style={{ marginTop: 10 }}><AnimatedMeter pct={81} gold /></div>
-              <div className="row between" style={{ marginTop: 8, fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--mute-2)' }}>
-                <span>SILVER</span><span style={{ color: 'var(--gold)' }}>● GOLD</span><span>ELITE</span><span>PLATINUM</span>
-              </div>
+          {activeTab !== 'overview' && activeTab !== 'rx' && (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: 80, color: 'var(--mute)', fontFamily: 'var(--mono)', fontSize: 12, letterSpacing: '0.06em' }}>
+              — {activeTab} coming soon —
             </div>
-
-            <div className="hr" />
-
-            <div>
-              <div className="eyebrow">Reminders</div>
-              <div className="col" style={{ gap: 12, marginTop: 12 }}>
-                <div className="rail-l" style={{ borderLeftColor: 'var(--gold)' }}>
-                  <div style={{ fontSize: 13, fontWeight: 500 }}>Pre-visit fasting</div>
-                  <div className="muted" style={{ fontSize: 11 }}>No retinoids 48h before Sat 31</div>
-                </div>
-                <div className="rail-l" style={{ borderLeftColor: 'var(--hair-strong)' }}>
-                  <div style={{ fontSize: 13, fontWeight: 500 }}>Lab results ready</div>
-                  <div className="muted" style={{ fontSize: 11 }}>Skin microbiome panel · view PDF</div>
-                </div>
-                <div className="rail-l" style={{ borderLeftColor: 'var(--hair-strong)' }}>
-                  <div style={{ fontSize: 13, fontWeight: 500 }}>Photo log overdue</div>
-                  <div className="muted" style={{ fontSize: 11 }}>Last upload 9 days ago · add new</div>
-                </div>
-              </div>
-            </div>
-
-            <div style={{ marginTop: 'auto', paddingTop: 12, borderTop: '1px solid var(--hair)' }}>
-              <div className="eyebrow gold dot">Tagline</div>
-              <div style={{ fontFamily: 'var(--serif)', fontSize: 19, lineHeight: 1.15, marginTop: 6, letterSpacing: '-0.01em' }}>
-                Expert dermatology <em style={{ fontStyle: 'italic', color: 'var(--gold)' }}>care</em>, personalised for you.
-              </div>
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
@@ -701,7 +684,7 @@ const DashboardMobile = () => {
                         display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--paper)',
                       }}>{m.taken && <IconCheck size={10} />}</div>
                       <div>
-                        <div style={{ fontSize: 13, fontWeight: 500, textDecoration: m.taken ? 'line-through' : 'none', color: m.taken ? 'var(--mute)' : 'var(--ink)' }}>{m.t}</div>
+                        <div style={{ fontSize: 13, fontWeight: 500, color: m.taken ? 'var(--mute)' : 'var(--ink)' }}>{m.t}</div>
                         <div style={{ fontSize: 10, color: 'var(--mute-2)' }}>{m.sub}</div>
                       </div>
                     </div>

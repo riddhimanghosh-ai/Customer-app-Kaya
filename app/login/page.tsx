@@ -110,64 +110,26 @@ export default function LoginPage() {
   const formProps = { email, pw, touched, success, showEmailErr, showPwErr, emailValid, pwValid, setEmail, setPw, setTouched, submit };
 
   return (
-    <>
-      {/* ── Mobile ── */}
-      <div className="mobile-only" style={{ minHeight: '100vh', background: 'var(--paper-grad)', display: 'flex', flexDirection: 'column' }}>
-        {/* Brand header */}
-        <div style={{
-          padding: '40px 24px 24px',
-          background: 'var(--paper-2)',
-          borderBottom: '1px solid var(--rule)',
-        }}>
-          <div style={{ fontFamily: 'var(--serif)', fontSize: 28, fontWeight: 500, lineHeight: 1, letterSpacing: '-0.02em' }}>
-            kaya<span style={{ color: 'var(--brand)' }}>.</span>
-          </div>
-          <div style={{ fontFamily: 'var(--mono)', fontSize: 9, letterSpacing: '0.2em', color: 'var(--mute)', marginTop: 6, textTransform: 'uppercase' }}>
-            Skin · Hair · Body
-          </div>
+    <div style={{ minHeight: '100vh', background: 'var(--paper-grad)', display: 'flex', flexDirection: 'column' }}>
+      {/* Brand header */}
+      <div style={{
+        padding: 'clamp(32px, 5vw, 48px) clamp(24px, 5vw, 48px) clamp(20px, 3vw, 28px)',
+        background: 'var(--paper-2)',
+        borderBottom: '1px solid var(--rule)',
+      }}>
+        <div style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(26px, 4vw, 32px)', fontWeight: 500, lineHeight: 1, letterSpacing: '-0.02em' }}>
+          kaya<span style={{ color: 'var(--brand)' }}>.</span>
         </div>
-        {/* Form */}
-        <div style={{ flex: 1, padding: '32px 24px 40px' }}>
+        <div style={{ fontFamily: 'var(--mono)', fontSize: 9, letterSpacing: '0.2em', color: 'var(--mute)', marginTop: 6, textTransform: 'uppercase' }}>
+          Skin · Hair · Body
+        </div>
+      </div>
+      {/* Form */}
+      <div style={{ flex: 1, display: 'flex', justifyContent: 'center', padding: 'clamp(32px, 5vw, 56px) clamp(24px, 5vw, 48px) clamp(40px, 6vw, 64px)' }}>
+        <div style={{ width: '100%', maxWidth: 420 }}>
           <LoginForm {...formProps} />
         </div>
       </div>
-
-      {/* ── Desktop ── */}
-      <div className="desktop-only">
-        <div className="frame row" style={{ height: '100vh' }}>
-          {/* Left editorial */}
-          <div style={{
-            flex: 1.1, padding: '48px 56px',
-            background: 'var(--paper-2)',
-            display: 'flex', flexDirection: 'column', overflow: 'hidden',
-          }}>
-            <div style={{ fontFamily: 'var(--serif)', fontSize: 32, fontWeight: 500, letterSpacing: '-0.02em' }}>
-              kaya<span style={{ color: 'var(--brand)' }}>.</span>
-            </div>
-            <div style={{ fontSize: 9, fontFamily: 'var(--mono)', letterSpacing: '0.2em', color: 'var(--mute)', marginTop: 6, textTransform: 'uppercase' }}>Skin · Hair · Body</div>
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', marginTop: -40 }}>
-              <div style={{ fontSize: 11, color: 'var(--brand)', textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: 'var(--mono)' }}>· Patient portal</div>
-              <div className="display" style={{ fontSize: 56, marginTop: 16 }}>
-                Welcome back<br />to your <span style={{ color: 'var(--brand)' }}>protocol</span>.
-              </div>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontSize: 10, color: 'var(--mute)', fontFamily: 'var(--mono)', letterSpacing: '0.1em' }}>· EST 2003 · 14 CLINICS</div>
-              <div style={{ display: 'flex', gap: 4 }}>
-                {[0,1,2].map(i => <span key={i} style={{ width: 6, height: 6, borderRadius: '50%', background: i === 0 ? 'var(--brand)' : 'var(--brand-tint)' }} />)}
-              </div>
-            </div>
-          </div>
-          {/* Right form */}
-          <div style={{
-            flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-            padding: 'clamp(32px, 6vw, 64px) clamp(32px, 6vw, 80px)',
-            background: 'var(--paper-2)', minWidth: 0, overflow: 'auto',
-          }}>
-            <LoginForm {...formProps} />
-          </div>
-        </div>
-      </div>
-    </>
+    </div>
   );
 }
