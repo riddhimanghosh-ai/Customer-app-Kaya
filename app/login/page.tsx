@@ -125,18 +125,6 @@ export default function LoginPage() {
           <div style={{ fontFamily: 'var(--mono)', fontSize: 9, letterSpacing: '0.2em', color: 'var(--mute)', marginTop: 6, textTransform: 'uppercase' }}>
             Skin · Hair · Body
           </div>
-          <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
-            {[
-              { v: '−34%', s: 'pigment · 9w' },
-              { v: '94%',  s: 'compliance' },
-              { v: 'Gold', s: '2,840 pts' },
-            ].map((stat, i) => (
-              <div key={i} style={{ flex: 1, padding: '10px 10px 8px', background: 'var(--paper-3)', borderRadius: 0, border: '1px solid var(--rule)' }}>
-                <div style={{ fontSize: 15, fontWeight: 700, letterSpacing: '-0.02em' }}>{stat.v}</div>
-                <div style={{ fontSize: 10, color: 'var(--mute)', marginTop: 2 }}>{stat.s}</div>
-              </div>
-            ))}
-          </div>
         </div>
         {/* Form */}
         <div style={{ flex: 1, padding: '32px 24px 40px' }}>
@@ -161,17 +149,6 @@ export default function LoginPage() {
               <div style={{ fontSize: 11, color: 'var(--brand)', textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: 'var(--mono)' }}>· Patient portal</div>
               <div className="display" style={{ fontSize: 56, marginTop: 16 }}>
                 Welcome back<br />to your <span style={{ color: 'var(--brand)' }}>protocol</span>.
-              </div>
-              <div className="muted" style={{ fontSize: 15, marginTop: 22, maxWidth: 380 }}>
-                Three weeks until your next review with Dr. Sharma.
-              </div>
-              <div style={{ display: 'flex', gap: 16, marginTop: 36 }}>
-                {[{ v: '−34%', s: 'pigment · 9 weeks' }, { v: '94%', s: 'compliance' }, { v: 'Gold', s: '2,840 pts' }].map((s, i) => (
-                  <div key={i} className="panel" style={{ padding: 16, flex: 1 }}>
-                    <div style={{ fontSize: 22, fontWeight: 600, letterSpacing: '-0.02em' }}>{s.v}</div>
-                    <div className="muted" style={{ fontSize: 11, marginTop: 4 }}>{s.s}</div>
-                  </div>
-                ))}
               </div>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
