@@ -276,6 +276,7 @@ const MobileShell = ({ active = 'home', children, dark }: any) => {
 };
 
 const DashboardDesktop = () => {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState('overview');
   const [meds, setMeds] = useState([
     { t: 'Tretinoin 0.025%', sub: 'PM · pea-sized', taken: true, time: '08:00' },
@@ -286,21 +287,51 @@ const DashboardDesktop = () => {
     { t: 'Moisturizer ceramide', sub: 'PM', taken: false, time: '22:00' }
   ]);
   const toggleMedDesktop = (i: number) => setMeds(m => m.map((x, j) => j === i ? { ...x, taken: !x.taken } : x));
+  const takenCount = meds.filter(m => m.taken).length;
 
   const pageTabs = [
-    { id: 'overview', label: 'Overview' },
-    { id: 'sessions', label: 'Sessions' },
-    { id: 'progress', label: 'Progress' },
-    { id: 'rx', label: 'Rx' },
-    { id: 'offers', label: 'Offers' },
-    { id: 'purchases', label: 'Purchases' },
+    { id: 'overview',   label: 'Overview' },
+    { id: 'sessions',   label: 'Sessions' },
+    { id: 'progress',   label: 'Progress' },
+    { id: 'rx',         label: 'Rx' },
+    { id: 'offers',     label: 'Offers' },
+    { id: 'purchases',  label: 'Purchases' },
   ];
 
   const quickLinks = [
-    { icon: <IconAppt size={22} />, title: 'Session History', sub: '9 sessions total' },
-    { icon: <IconSummary size={22} />, title: 'Summary', sub: 'Session summaries' },
-    { icon: <IconMed size={22} />, title: 'My Rx', sub: '6 items active' },
-    { icon: <IconRewards size={22} />, title: 'Loyalty', sub: 'Gold · 2,840 pts' },
+    { icon: <IconAppt size={22} />,    title: 'Session History', sub: '9 sessions total',    href: '/sessions' },
+    { icon: <IconSummary size={22} />, title: 'Summary',         sub: 'Session summaries',   href: '/summary' },
+    { icon: <IconMed size={22} />,     title: 'My Rx',           sub: '6 items active',      href: '/prescriptions' },
+    { icon: <IconRewards size={22} />, title: 'Loyalty',         sub: 'Gold · 2,840 pts',    href: '/loyalty' },
+  ];
+
+  const sessions = [
+    { date: '13 May', type: 'Consultation', title: 'Post-peel review · Dr. Sharma', preview: 'Skin tone improving. Phase 3 HydraFacial sessions initiated. Follow up Jun 18.' },
+    { date: '30 Apr', type: 'Treatment',    title: 'Kaya Chemical Peel Treatment · TCA', preview: 'Mild erythema, resolved within 24h. Phase 2 complete.' },
+    { date: '14 Apr', type: 'Treatment',    title: 'Kaya HydraFacial · Phase 3 · Session 1', preview: 'Deep cleanse + hydration infusion. Skin responded well.' },
+    { date: '28 Mar', type: 'Treatment',    title: 'Kaya Chemical Peel · Session 3', preview: 'Final peel of Phase 2. Skin barrier intact. Minor flaking expected.' },
+    { date: '14 Mar', type: 'Consultation', title: 'Initial consultation · Dr. Sharma', preview: 'PIH + mild acne diagnosed. Protocol planned: 4-phase skin programme.' },
+  ];
+
+  const phases = [
+    { p: 'Phase 1', s: 'Consultation + skin map',      d: 'Mar 14',        done: true,  current: false },
+    { p: 'Phase 2', s: 'Chemical peel · 3 sessions',   d: 'Apr 2 – Apr 30',done: true,  current: false },
+    { p: 'Phase 3', s: 'Hydrafacial · 4 sessions',     d: 'May 7 – Jun 6', done: false, current: true  },
+    { p: 'Phase 4', s: 'Maintenance review',            d: 'Jun 18',        done: false, current: false },
+  ];
+
+  const purchases = [
+    { date: '02 May 2025', name: 'Tretinoin 0.025% Cream',      price: '₹580',  status: 'Delivered' },
+    { date: '16 Apr 2025', name: 'Kaya HydraFacial · Session 1',price: '₹3,200',status: 'Completed' },
+    { date: '02 Apr 2025', name: 'Chemical Peel Package · 3x',  price: '₹7,500',status: 'Active' },
+    { date: '14 Mar 2025', name: 'Initial Consultation',         price: '₹800',  status: 'Completed' },
+  ];
+
+  const offers = [
+    { title: '20% off Hydrafacial top-up', sub: 'Valid till Jun 30 · use code KAYA20',  tag: 'EXCLUSIVE' },
+    { title: 'Free skin analysis',          sub: 'With any treatment booked in June',     tag: 'LIMITED'   },
+    { title: 'Refer & earn ₹500',           sub: 'For every friend who completes a booking', tag: 'REFERRAL' },
+    { title: 'Upgrade to Platinum',         sub: '5 more referrals · unlock premium benefits', tag: 'LOYALTY'  },
   ];
 
   return (
@@ -373,7 +404,7 @@ const DashboardDesktop = () => {
             {/* 2×2 quick-link grid */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginTop: 16 }}>
               {quickLinks.map((card, i) => (
-                <div key={i} className="panel" style={{ padding: '18px 20px', cursor: 'pointer' }}>
+                <div key={i} className="panel" onClick={() => router.push(card.href)} style={{ padding: '18px 20px', cursor: 'pointer' }}>
                   <div style={{ color: 'var(--mute)', marginBottom: 12 }}>{card.icon}</div>
                   <div style={{ fontSize: 15, fontWeight: 600 }}>{card.title}</div>
                   <div style={{ fontSize: 12, color: 'var(--mute)', marginTop: 4 }}>{card.sub}</div>
@@ -406,23 +437,93 @@ const DashboardDesktop = () => {
             </div>
           </>}
 
-          {activeTab === 'rx' && <>
-            <div style={{ fontSize: 22, fontWeight: 600, marginBottom: 16, letterSpacing: '-0.02em' }}>Today · Regimen</div>
-            <div style={{ fontSize: 13, color: 'var(--mute)', marginBottom: 16 }}>{meds.filter(m => m.taken).length} of {meds.length} taken</div>
-            <AnimatedMeter pct={(meds.filter(m => m.taken).length / meds.length) * 100} />
-            <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 0 }}>
+          {activeTab === 'sessions' && <>
+            <div style={{ fontSize: 22, fontWeight: 600, letterSpacing: '-0.02em', marginBottom: 4 }}>Recent sessions</div>
+            <div style={{ fontSize: 13, color: 'var(--mute)', marginBottom: 20 }}>9 total · 2 packages active</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {sessions.map((s, i) => (
+                <div key={i} onClick={() => router.push('/summary')} style={{
+                  border: '1px solid var(--hair)', padding: '16px 20px', cursor: 'pointer',
+                  display: 'flex', gap: 20, alignItems: 'flex-start',
+                }}>
+                  <div style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--mute)', minWidth: 52, marginTop: 2 }}>{s.date}</div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+                      <span style={{ fontSize: 14, fontWeight: 600 }}>{s.title}</span>
+                      <span style={{ fontSize: 10, fontFamily: 'var(--mono)', letterSpacing: '0.06em', padding: '2px 8px', border: '1px solid var(--hair)', color: 'var(--mute)' }}>{s.type}</span>
+                    </div>
+                    <div style={{ fontSize: 12, color: 'var(--mute)', lineHeight: 1.5 }}>{s.preview}</div>
+                  </div>
+                  <div style={{ fontSize: 12, color: 'var(--brand)', fontWeight: 500, flexShrink: 0 }}>View →</div>
+                </div>
+              ))}
+            </div>
+            <button className="btn ghost sm" onClick={() => router.push('/sessions')} style={{ marginTop: 16 }}>View all sessions</button>
+          </>}
+
+          {activeTab === 'progress' && <>
+            <div style={{ fontSize: 22, fontWeight: 600, letterSpacing: '-0.02em', marginBottom: 4 }}>Treatment progress</div>
+            <div style={{ fontSize: 13, color: 'var(--mute)', marginBottom: 24 }}>Mar 14 – Jun 18 · 12-week programme</div>
+
+            {/* Compliance */}
+            <div style={{ border: '1px solid var(--hair)', padding: '20px 24px', marginBottom: 16 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                <div style={{ fontSize: 14, fontWeight: 600 }}>Regimen compliance</div>
+                <div style={{ fontFamily: 'var(--mono)', fontSize: 24, fontWeight: 700, color: 'var(--ok)' }}>94%</div>
+              </div>
+              <div style={{ height: 6, background: 'var(--hair-2)', borderRadius: 2, overflow: 'hidden' }}>
+                <div style={{ height: '100%', width: '94%', background: 'var(--ok)', borderRadius: 2 }} />
+              </div>
+              <div style={{ fontSize: 11, color: 'var(--mute)', marginTop: 8 }}>{takenCount} of {meds.length} taken today · Mar 14 – Jun 18</div>
+            </div>
+
+            {/* Phases timeline */}
+            <div style={{ border: '1px solid var(--hair)', padding: '20px 24px', marginBottom: 16 }}>
+              <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 16 }}>Treatment phases</div>
+              <div style={{ height: 4, background: 'var(--hair-2)', marginBottom: 20, position: 'relative', borderRadius: 2 }}>
+                <div style={{ position: 'absolute', left: 0, top: 0, height: '100%', width: '75%', background: 'var(--brand)', borderRadius: 2 }} />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+                {phases.map((x, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 14, padding: '12px 0', borderBottom: i < phases.length - 1 ? '1px solid var(--hair)' : 'none' }}>
+                    <div style={{
+                      width: 20, height: 20, marginTop: 1, flexShrink: 0,
+                      border: '1px solid ' + (x.done ? 'var(--ink)' : x.current ? 'var(--brand)' : 'var(--hair-2)'),
+                      background: x.done ? 'var(--ink)' : x.current ? 'var(--brand)' : 'transparent',
+                      color: 'var(--paper)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}>
+                      {x.done && <IconCheck size={12} />}
+                      {x.current && <span style={{ width: 6, height: 6, background: 'var(--paper)', borderRadius: '50%' }} />}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 14, fontWeight: 500 }}>{x.p} <span style={{ color: 'var(--mute)', fontWeight: 400 }}>· {x.s}</span></div>
+                      <div style={{ fontSize: 11, color: 'var(--mute)', marginTop: 2, fontFamily: 'var(--mono)' }}>{x.d}</div>
+                    </div>
+                    {x.done && <span style={{ fontSize: 10, color: 'var(--ok)', fontWeight: 600, fontFamily: 'var(--mono)' }}>DONE</span>}
+                    {x.current && <span style={{ fontSize: 10, color: 'var(--brand)', fontWeight: 600, fontFamily: 'var(--mono)' }}>IN PROGRESS</span>}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Today's regimen */}
+            <div style={{ border: '1px solid var(--hair)', padding: '20px 24px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                <div style={{ fontSize: 14, fontWeight: 600 }}>Today · Regimen</div>
+                <div style={{ fontSize: 12, color: 'var(--mute)', fontFamily: 'var(--mono)' }}>{takenCount} / {meds.length} taken</div>
+              </div>
+              <div style={{ height: 4, background: 'var(--hair-2)', marginBottom: 16, borderRadius: 2, overflow: 'hidden' }}>
+                <div style={{ height: '100%', width: `${(takenCount / meds.length) * 100}%`, background: 'var(--ink)', borderRadius: 2 }} />
+              </div>
               {meds.map((m, i) => (
                 <div key={i} onClick={() => toggleMedDesktop(i)} style={{
                   display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                  padding: '12px 0', borderBottom: i < meds.length - 1 ? '1px solid var(--hair)' : 'none', cursor: 'pointer',
+                  padding: '10px 0', borderBottom: i < meds.length - 1 ? '1px solid var(--hair)' : 'none', cursor: 'pointer',
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <div style={{
-                      width: 16, height: 16, borderRadius: 2, flexShrink: 0,
-                      border: '1px solid ' + (m.taken ? 'var(--ink)' : 'var(--hair-2)'),
-                      background: m.taken ? 'var(--ink)' : 'transparent',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--paper)',
-                    }}>{m.taken && <IconCheck size={10} />}</div>
+                    <div style={{ width: 16, height: 16, borderRadius: 2, flexShrink: 0, border: '1px solid ' + (m.taken ? 'var(--ink)' : 'var(--hair-2)'), background: m.taken ? 'var(--ink)' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--paper)' }}>
+                      {m.taken && <IconCheck size={10} />}
+                    </div>
                     <div>
                       <div style={{ fontSize: 13, fontWeight: 500, color: m.taken ? 'var(--mute)' : 'var(--ink)' }}>{m.t}</div>
                       <div style={{ fontSize: 11, color: 'var(--mute-2)' }}>{m.sub}</div>
@@ -434,11 +535,67 @@ const DashboardDesktop = () => {
             </div>
           </>}
 
-          {activeTab !== 'overview' && activeTab !== 'rx' && (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: 80, color: 'var(--mute)', fontFamily: 'var(--mono)', fontSize: 12, letterSpacing: '0.06em' }}>
-              — {activeTab} coming soon —
+          {activeTab === 'rx' && <>
+            <div style={{ fontSize: 22, fontWeight: 600, marginBottom: 8, letterSpacing: '-0.02em' }}>My Rx</div>
+            <div style={{ fontSize: 13, color: 'var(--mute)', marginBottom: 20 }}>Prescribed by Dr. Ananya Sharma</div>
+            <div style={{ height: 4, background: 'var(--hair-2)', marginBottom: 20, borderRadius: 2, overflow: 'hidden' }}>
+              <div style={{ height: '100%', width: `${(takenCount / meds.length) * 100}%`, background: 'var(--ink)', borderRadius: 2 }} />
             </div>
-          )}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 0, border: '1px solid var(--hair)' }}>
+              {meds.map((m, i) => (
+                <div key={i} onClick={() => toggleMedDesktop(i)} style={{
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                  padding: '14px 16px', borderBottom: i < meds.length - 1 ? '1px solid var(--hair)' : 'none', cursor: 'pointer',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div style={{ width: 16, height: 16, borderRadius: 2, flexShrink: 0, border: '1px solid ' + (m.taken ? 'var(--ink)' : 'var(--hair-2)'), background: m.taken ? 'var(--ink)' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--paper)' }}>
+                      {m.taken && <IconCheck size={10} />}
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 500, color: m.taken ? 'var(--mute)' : 'var(--ink)' }}>{m.t}</div>
+                      <div style={{ fontSize: 11, color: 'var(--mute-2)' }}>{m.sub}</div>
+                    </div>
+                  </div>
+                  <div style={{ fontSize: 11, fontFamily: 'var(--mono)', color: 'var(--mute-2)' }}>{m.time}</div>
+                </div>
+              ))}
+            </div>
+            <button className="btn ghost sm" onClick={() => router.push('/prescriptions')} style={{ marginTop: 16 }}>View full prescriptions →</button>
+          </>}
+
+          {activeTab === 'offers' && <>
+            <div style={{ fontSize: 22, fontWeight: 600, letterSpacing: '-0.02em', marginBottom: 4 }}>Offers for you</div>
+            <div style={{ fontSize: 13, color: 'var(--mute)', marginBottom: 20 }}>Exclusive to Gold members</div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+              {offers.map((o, i) => (
+                <div key={i} style={{ border: '1px solid var(--hair)', padding: '20px 22px', cursor: 'pointer' }}>
+                  <span style={{ fontSize: 10, fontFamily: 'var(--mono)', letterSpacing: '0.08em', padding: '3px 8px', background: 'var(--accent-soft)', color: 'var(--brand)', fontWeight: 700 }}>{o.tag}</span>
+                  <div style={{ fontSize: 15, fontWeight: 600, marginTop: 12, marginBottom: 6 }}>{o.title}</div>
+                  <div style={{ fontSize: 12, color: 'var(--mute)', lineHeight: 1.5 }}>{o.sub}</div>
+                  <div style={{ fontSize: 12, color: 'var(--brand)', fontWeight: 500, marginTop: 14 }}>Claim offer →</div>
+                </div>
+              ))}
+            </div>
+          </>}
+
+          {activeTab === 'purchases' && <>
+            <div style={{ fontSize: 22, fontWeight: 600, letterSpacing: '-0.02em', marginBottom: 4 }}>Purchases</div>
+            <div style={{ fontSize: 13, color: 'var(--mute)', marginBottom: 20 }}>Products, sessions & treatments</div>
+            <div style={{ border: '1px solid var(--hair)' }}>
+              {purchases.map((p, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px', borderBottom: i < purchases.length - 1 ? '1px solid var(--hair)' : 'none' }}>
+                  <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+                    <div style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--mute)', minWidth: 72 }}>{p.date}</div>
+                    <div style={{ fontSize: 13, fontWeight: 500 }}>{p.name}</div>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                    <span style={{ fontSize: 10, fontFamily: 'var(--mono)', padding: '3px 8px', border: '1px solid var(--hair)', color: 'var(--mute)' }}>{p.status}</span>
+                    <div style={{ fontSize: 14, fontWeight: 600, fontFamily: 'var(--mono)' }}>{p.price}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>}
         </div>
       </div>
     </div>
